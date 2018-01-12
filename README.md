@@ -1,2 +1,5 @@
-# see-bee
-This will be used for data replication of relational database tables into event streams.
+# See Bee
+
+![See Bee](logo/see-bee.png)
+
+*This is work in progress*  
