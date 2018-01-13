@@ -7,4 +7,4 @@ The purpose of this repo is to track, and propagate to event streams, all change
 
 ![See Bee](logo/see-bee.png)
 
-A bee eyes contains about 6,900 facets and is well suited for detecting movement. In fact, honeybees can perceive movements that are separated by 1/300th of a second (humans can only sense movements separated by 1/50th of a second).
+Bee's eyes contains about 6,900 facets and are well suited for detecting movement. Some honeybees can perceive movements that are separated by 1/300th of a second (humans can only sense movements separated by 1/50th of a second).
