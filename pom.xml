@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.namely.seebee</groupId>
+    <artifactId>seebee-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <!-- Project Metadata -->
+    <name>See Bee</name>
+    <description>
+        Data replication of relational database tables into event streams.
+    </description>
+    
+    
+    <!-- Modules -->
+    <modules>
+        <module>repository</module>
+        <module>typemapper</module>
+        <module>typemapper-standard</module>
+        <module>application</module>
+    </modules>
+
+    <organization>
+        <name>Namely, Inc.</name>
+        <url>http://www.namely.com/</url>
+    </organization>
+    
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+        
+    <developers>
+        <developer>
+            <id>Minborg</id>
+            <name>Per Ake Minborg</name>
+            <url>https://github.com/minborg</url>
+            <email>minborg@speedment.com</email>
+            <timezone>America/Los_Angeles</timezone>
+        </developer>
+        <developer>
+            <id>lawesson</id>
+            <name>Dan Lawesson</name>
+            <url>https://github.com/lawesson</url>
+            <email>dan@speedment.com</email>
+            <timezone>America/Los_Angeles</timezone>
+        </developer>
+        <developer>
+            <id>Pyknic</id>
+            <name>Emil Forslund</name>
+            <url>https://github.com/pyknic</url>
+            <email>emil@speedment.com</email>
+            <timezone>America/Los_Angeles</timezone>
+        </developer>
+    </developers>        
+        
+                
+    <contributors>
+        <contributor>
+            <name>Mike Hansen</name>
+            <timezone>America/New_York</timezone>
+        </contributor>
+        <contributor>
+            <name>Oana Tararache</name>
+            <timezone>America/New_York</timezone>
+        </contributor>
+    </contributors>                
+                
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>9</maven.compiler.source>
+        <maven.compiler.target>9</maven.compiler.target>
+        <junit.jupiter.version>5.1.0-M1</junit.jupiter.version>
+        <junit.platform.provider.version>1.1.0-M1</junit.platform.provider.version>
+    </properties>
+    
+    <!-- Distribution Details -->
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/namely/see-bee/issues</url>
+    </issueManagement>
+    
+    <scm>
+        <connection>scm:git:git://github.com/namely/see-bee.git</connection>
+        <developerConnection>scm:git:git@github.com:namely/see-bee.git</developerConnection>
+        <url>https://github.com/namely/see-bee/</url>
+    </scm>
+	
+        
+    
+    <!-- Plugins -->
+    <build>
+        
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+
+                <configuration>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                    
+                    <fork>true</fork>
+                    <optimize>true</optimize>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <meminitial>256m</meminitial>
+                    <maxmem>1024m</maxmem>
+                    <source>9</source>
+                    <target>9</target>
+                    <excludes>
+                        <exclude>**/package-info.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.5</version>
+            </plugin>
+
+            <!-- Maven Surefire Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20.1</version>
+                    
+                <configuration>
+                    <useFile>false</useFile>
+                    <trimStackTrace>false</trimStackTrace>
+                </configuration>
+                    
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>${junit.platform.provider.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0</version>
+
+                <configuration>
+                    <header>license_header.txt</header>
+                    <properties>
+                        <currentYear>2018</currentYear>
+                    </properties>
+                    <excludes>
+                        <exclude>**/README</exclude>
+                        <exclude>**/README.md</exclude>
+                        <exclude>**/package-info.java</exclude>
+                        <exclude>**/nbactions.xml</exclude>
+                        <exclude>**/nb-configuration.xml</exclude>
+                        <exclude>**/*.versionsBackup</exclude>
+                        <exclude>CONTRIBUTOR_LICENSE_AGREEMENT</exclude>
+                        <exclude>LICENSE</exclude>
+                        <exclude>DISCLAIMER</exclude>
+                        <exclude>THIRD_PARTY_LICENSES</exclude>
+                        <exclude>src/test/resources/**</exclude>
+                        <exclude>src/main/resources/**</exclude>
+                        <exclude>nbproject/**</exclude>
+                        <exclude>build.gradle</exclude>
+                    </excludes>
+                </configuration>
+
+            </plugin>
+            
+            
+        </plugins>
+    </build>
+
+    <!--                    
+    <profiles>
+        <profile> 
+            <id>release</id>
+            
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+
+                        <reportSets>
+                            <reportSet>
+                                <id>aggregate</id>
+                                <reports>
+                                    <report>aggregate</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>3.0.5</version>
+                    </plugin>
+                </plugins>
+            </reporting>
+            
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>3.0.0</version>
+                            
+                            <inherited>true</inherited>
+
+                            <executions>
+                                <execution>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>jar</goal>
+                                        <goal>aggregate-jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+
+                            <configuration>
+                                <groups>
+                                    <group>
+                                        <title>Core</title>
+                                        <packages>com.namely.seebe.core:com.namely.seebe.core.*</packages>
+                                    </group>
+                                    <group>
+                                        <title>Type Mapper</title>
+                                        <packages>com.namely.seebe.typemapper:com.namely.seebe.typemapper.*</packages>
+                                    </group>
+                                </groups>
+                                
+                                <aggregate>true</aggregate>
+                                <keywords>true</keywords>
+                                <docfilessubdirs>true</docfilessubdirs>
+                                <excludePackageNames>*.internal.*</excludePackageNames>
+                                <includeDependencySources>true</includeDependencySources>
+
+                                <additionalJOptions>
+                                    <additionalJOption>-J-Xmx1g</additionalJOption>
+                                </additionalJOptions>
+                            </configuration>
+                        </plugin>
+
+                        <plugin>
+                            <artifactId>maven-source-plugin</artifactId>
+                            <version>3.0.1</version>
+                            <inherited>true</inherited>
+                            
+                            <executions>
+                                <execution>
+                                    <id>attach-sources</id>
+                                    <goals>
+                                        <goal>jar-no-fork</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        
+                        <plugin>
+                            <groupId>org.sonatype.plugins</groupId>
+                            <artifactId>nexus-staging-maven-plugin</artifactId>
+                            <version>1.6.8</version>
+                        </plugin>
+                        
+                    </plugins>
+                </pluginManagement>
+                
+                <plugins>
+
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.20.1</version>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <argLine>${surefireArgLine}</argLine>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <argLine>-XX:MaxPermSize=512m</argLine>
+                        </configuration>
+                    </plugin>
+                    
+                    
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        
+                        <configuration>
+                            <keyname>${gpg.keyname}</keyname>
+                            <passphrase>${gpg.passphrase}</passphrase>
+                            <executable>${gpg.executable}</executable>
+                        </configuration>
+                    </plugin>
+                    
+                    <plugin>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>2.8.2</version>
+                        
+                        <configuration>
+                             Deployment is already handled by nexus-staging-maven-plugin 
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        
+                        <extensions>true</extensions>
+                        
+                        <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        
+                        <configuration>
+                            <serverId>sonatype-nexus-staging</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>                                                            -->
+        
+        
+    <dependencies>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+    
+</project>

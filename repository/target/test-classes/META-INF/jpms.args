@@ -1,0 +1,4 @@
+--patch-module
+com.namely.seebee.core=_
+--add-reads
+com.namely.seebee.core=ALL-UNNAMED
