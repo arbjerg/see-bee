@@ -33,6 +33,7 @@
     
     <!-- Modules -->
     <modules>
+        <module>configuration</module>
         <module>repository</module>
         <module>typemapper</module>
         <module>typemapper-standard</module>
