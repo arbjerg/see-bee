@@ -1,8 +1,0 @@
-com/namely/seebee/repository/Repository.class
-com/namely/seebee/repository/internal/DefaultRepository.class
-module-info.class
-com/namely/seebee/repository/internal/DefaultRepositoryBuilder$HasWithImpl.class
-com/namely/seebee/repository/Repository$Builder.class
-com/namely/seebee/repository/internal/DefaultRepositoryBuilder.class
-com/namely/seebee/repository/Repository$Builder$HasWith.class
-com/namely/seebee/repository/internal/DefaultRepositoryBuilder$1.class

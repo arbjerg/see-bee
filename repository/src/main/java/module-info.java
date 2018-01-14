@@ -14,6 +14,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-module com.namely.seebee.core {
+module com.namely.seebee.repository {
     exports com.namely.seebee.repository;
 }

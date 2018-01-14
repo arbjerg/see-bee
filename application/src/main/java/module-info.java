@@ -15,10 +15,8 @@
  * the License.
  */
 module com.namely.seebee.application {
+    requires com.namely.seebee.configuration;
+    requires com.namely.seebee.repository;
     requires com.namely.seebee.typemapper;
-    requires com.namely.seebee.core;
     requires com.namely.seebee.typemaper.standard;
-
-    uses com.namely.seebee.typemapper.TypeMapper;
-    
 }
