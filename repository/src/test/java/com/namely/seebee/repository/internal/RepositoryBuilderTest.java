@@ -38,7 +38,7 @@ public class RepositoryBuilderTest {
         final Repository repo = instance
             .provide(Integer.class).with(0)
             .provide(Integer.class).getting(() -> 1)
-            .provide(Integer.class).applying(b -> 3)
+            .provide(Integer.class).applying(b -> 2)
             .provide(TestComponent.class).applying(TestComponentImpl::new)
             .build();
 
@@ -52,7 +52,7 @@ public class RepositoryBuilderTest {
         assertEquals("Olle 0", name);
 
         final Integer last = repo.getOrThrow(Integer.class);
-        assertEquals((Integer) 3, last);
+        assertEquals((Integer) 2, last);
 
     }
 
@@ -60,6 +60,7 @@ public class RepositoryBuilderTest {
     void testClose() {
         final TestComponent testComponent;
         try (Repository repo = new DefaultRepositoryBuilder()
+            .provide(Integer.class).with(0)
             .provide(TestComponent.class).applying(TestComponentImpl::new)
             .build()) {
             testComponent = repo.getOrThrow(TestComponent.class);
@@ -80,7 +81,7 @@ public class RepositoryBuilderTest {
         private final AtomicBoolean closed;
 
         public TestComponentImpl(Function<Class<?>, Stream<? extends Object>> builder) {
-            Integer first = (Integer) builder.apply(Integer.class).findFirst().get();
+            final Integer first = (Integer) builder.apply(Integer.class).findFirst().get();
             this.name = "Olle " + first;
             this.closed = new AtomicBoolean();
         }

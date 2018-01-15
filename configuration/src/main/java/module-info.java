@@ -15,5 +15,5 @@
  * the License.
  */
 module com.namely.seebee.configuration {
-    exports com.namely.seebee.condiguration;
+    exports com.namely.seebee.configuration;
 }

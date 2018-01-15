@@ -94,8 +94,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>9</maven.compiler.source>
         <maven.compiler.target>9</maven.compiler.target>
-        <junit.jupiter.version>5.1.0-M1</junit.jupiter.version>
-        <junit.platform.provider.version>1.1.0-M1</junit.platform.provider.version>
+        <junit.jupiter.version>5.0.2</junit.jupiter.version>
+        <junit.platform.provider.version>1.0.2</junit.platform.provider.version>
     </properties>
     
     <!-- Distribution Details -->
@@ -149,7 +149,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20.1</version>
+                <version>2.19.1</version>
                     
                 <configuration>
                     <useFile>false</useFile>
@@ -198,183 +198,6 @@
             
         </plugins>
     </build>
-
-    <!--                    
-    <profiles>
-        <profile> 
-            <id>release</id>
-            
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-
-                        <reportSets>
-                            <reportSet>
-                                <id>aggregate</id>
-                                <reports>
-                                    <report>aggregate</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>3.0.5</version>
-                    </plugin>
-                </plugins>
-            </reporting>
-            
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>3.0.0</version>
-                            
-                            <inherited>true</inherited>
-
-                            <executions>
-                                <execution>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>jar</goal>
-                                        <goal>aggregate-jar</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-
-                            <configuration>
-                                <groups>
-                                    <group>
-                                        <title>Core</title>
-                                        <packages>com.namely.seebe.core:com.namely.seebe.core.*</packages>
-                                    </group>
-                                    <group>
-                                        <title>Type Mapper</title>
-                                        <packages>com.namely.seebe.typemapper:com.namely.seebe.typemapper.*</packages>
-                                    </group>
-                                </groups>
-                                
-                                <aggregate>true</aggregate>
-                                <keywords>true</keywords>
-                                <docfilessubdirs>true</docfilessubdirs>
-                                <excludePackageNames>*.internal.*</excludePackageNames>
-                                <includeDependencySources>true</includeDependencySources>
-
-                                <additionalJOptions>
-                                    <additionalJOption>-J-Xmx1g</additionalJOption>
-                                </additionalJOptions>
-                            </configuration>
-                        </plugin>
-
-                        <plugin>
-                            <artifactId>maven-source-plugin</artifactId>
-                            <version>3.0.1</version>
-                            <inherited>true</inherited>
-                            
-                            <executions>
-                                <execution>
-                                    <id>attach-sources</id>
-                                    <goals>
-                                        <goal>jar-no-fork</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                        
-                        <plugin>
-                            <groupId>org.sonatype.plugins</groupId>
-                            <artifactId>nexus-staging-maven-plugin</artifactId>
-                            <version>1.6.8</version>
-                        </plugin>
-                        
-                    </plugins>
-                </pluginManagement>
-                
-                <plugins>
-
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.20.1</version>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <argLine>${surefireArgLine}</argLine>
-                                </configuration>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <argLine>-XX:MaxPermSize=512m</argLine>
-                        </configuration>
-                    </plugin>
-                    
-                    
-                    <plugin>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        
-                        <configuration>
-                            <keyname>${gpg.keyname}</keyname>
-                            <passphrase>${gpg.passphrase}</passphrase>
-                            <executable>${gpg.executable}</executable>
-                        </configuration>
-                    </plugin>
-                    
-                    <plugin>
-                        <artifactId>maven-deploy-plugin</artifactId>
-                        <version>2.8.2</version>
-                        
-                        <configuration>
-                             Deployment is already handled by nexus-staging-maven-plugin 
-                            <skip>true</skip>
-                        </configuration>
-                    </plugin>
-                    
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        
-                        <extensions>true</extensions>
-                        
-                        <executions>
-                            <execution>
-                                <id>default-deploy</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        
-                        <configuration>
-                            <serverId>sonatype-nexus-staging</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>                                                            -->
-        
         
     <dependencies>
 

@@ -14,9 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.namely.seebee.condiguration.internal;
+package com.namely.seebee.configuration.internal;
 
-import com.namely.seebee.condiguration.Configuration;
+import com.namely.seebee.configuration.Configuration;
 
 /**
  *

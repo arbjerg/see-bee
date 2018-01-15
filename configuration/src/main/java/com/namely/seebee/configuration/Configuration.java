@@ -14,10 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.namely.seebee.condiguration;
+package com.namely.seebee.configuration;
 
-import com.namely.seebee.condiguration.internal.DefaultConfiguration;
-import com.namely.seebee.condiguration.internal.yaml.YamlConfiguration;
+import com.namely.seebee.configuration.internal.DefaultConfiguration;
+import com.namely.seebee.configuration.internal.yaml.YamlConfiguration;
 import java.util.function.Function;
 import java.util.stream.Stream;
 

@@ -18,7 +18,7 @@ package com.namely.seebee.application;
 
 import com.namely.seebee.application.internal.util.GreetingUtil;
 import com.namely.seebee.application.internal.util.RepositoryUtil;
-import com.namely.seebee.condiguration.Configuration;
+import com.namely.seebee.configuration.Configuration;
 import com.namely.seebee.repository.Repository;
 import com.namely.seebee.version.Version;
 import java.lang.System.Logger;
