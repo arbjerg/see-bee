@@ -50,17 +50,20 @@ public class RepositoryBuilderTest {
         final TestComponent testComponent = repo.getOrThrow(TestComponent.class);
         final String name = testComponent.getName();
         assertEquals("Olle 0", name);
+
+        final Integer last = repo.getOrThrow(Integer.class);
+        assertEquals((Integer) 3, last);
+
     }
 
     @Test
     void testClose() {
-        final Repository repo = new DefaultRepositoryBuilder()
+        final TestComponent testComponent;
+        try (Repository repo = new DefaultRepositoryBuilder()
             .provide(TestComponent.class).applying(TestComponentImpl::new)
-            .build();
-
-        final TestComponent testComponent = repo.getOrThrow(TestComponent.class);
-
-        repo.close();
+            .build()) {
+            testComponent = repo.getOrThrow(TestComponent.class);
+        }
         assertTrue(testComponent.isClosed());
     }
 
@@ -80,6 +83,38 @@ public class RepositoryBuilderTest {
             Integer first = (Integer) builder.apply(Integer.class).findFirst().get();
             this.name = "Olle " + first;
             this.closed = new AtomicBoolean();
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public void close() {
+            closed.set(true);
+        }
+
+        @Override
+        public boolean isClosed() {
+            return closed.get();
+        }
+
+    }
+
+    static class TestComponentImpl2 implements TestComponent, AutoCloseable {
+
+        private final String name;
+        private final AtomicBoolean closed;
+
+        public <T extends Integer> TestComponentImpl2(Function<Class<? super T>, Stream<T>> builder) {
+            Integer first = builder.apply(Integer.class).findFirst().get();
+            this.name = "Olle " + first;
+            this.closed = new AtomicBoolean();
+        }
+
+        private <T> Stream<T> casted(Function<Class<? super T>, Stream<T>> builder, Class<T> clazz) {
+            return builder.apply(clazz).map(clazz::cast);
         }
 
         @Override
