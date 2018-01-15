@@ -17,6 +17,7 @@
 package com.namely.seebee.version.internal;
 
 import com.namely.seebee.version.Version;
+import java.util.stream.Stream;
 
 /**
  *
@@ -39,6 +40,12 @@ public class DefaultVersion implements Version {
         return "Namely, Inc.";
     }
 
+        @Override
+    public boolean isProductionMode() {
+        return Stream.of("EA", "SNAPSHOT")
+            .noneMatch(version().toUpperCase()::contains);
+    }
+    
     @Override
     public String jvmImplementationVersion() {
         return System.getProperty("java.vm.version");

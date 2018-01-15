@@ -47,6 +47,10 @@ public class Main {
             System.out.println(GreetingUtil.jvmGreetingMessage(version));
 
             LOGGER.log(Logger.Level.INFO, "Started");
+            if (!version.isProductionMode()) {
+                LOGGER.log(Logger.Level.WARNING, "This version is NOT INTENDED FOR PRODUCTION USE!");
+            }
+
         }
 
     }

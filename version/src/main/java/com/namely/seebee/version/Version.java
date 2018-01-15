@@ -32,6 +32,8 @@ public interface Version {
     
     String vendor();
     
+    boolean isProductionMode();
+    
     String jvmImplementationVersion();
     
     String jvmImplementationVendor();
