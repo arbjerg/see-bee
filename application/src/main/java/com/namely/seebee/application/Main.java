@@ -17,6 +17,7 @@
 package com.namely.seebee.application;
 
 import com.namely.seebee.application.internal.util.GreetingUtil;
+import com.namely.seebee.application.internal.util.RepositoryUtil;
 import com.namely.seebee.condiguration.Configuration;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,27 +35,21 @@ public class Main {
 
     public static void main(String[] args) {
 
-        final Repository repo = Repository.builder()
-            .provide(String.class).applying(b -> "Tryggve")
-            .provide(List.class).getting(ArrayList::new)
-            .provide(Integer.class).with(1)
-            .provide(Integer.class).with(2)
-            .provide(Configuration.class).getting(Configuration::defaultConfiguration)
-            .provide(Version.class).getting(Version::defaultVersion)
-            .build();
+        try (Repository repo = RepositoryUtil.standardRepositoryBuilder().build()) {
 
-        System.out.println("TypeMapper components");
-        repo.stream(Integer.class)
-            .forEach(System.out::println);
+            System.out.println("TypeMapper components");
+            repo.stream(Integer.class)
+                .forEach(System.out::println);
 
-        final Configuration configuration = repo.getOrThrow(Configuration.class);
-        final Version version = repo.getOrThrow(Version.class);
+            final Configuration configuration = repo.getOrThrow(Configuration.class);
+            final Version version = repo.getOrThrow(Version.class);
 
-        System.out.println(GreetingUtil.seeBeeGreetingMessage(version));
-        System.out.println();
-        System.out.println(GreetingUtil.jvmGreetingMessage(version));
-        
-        LOGGER.log(Logger.Level.INFO, "Started");
+            System.out.println(GreetingUtil.seeBeeGreetingMessage(version));
+            System.out.println();
+            System.out.println(GreetingUtil.jvmGreetingMessage(version));
+
+            LOGGER.log(Logger.Level.INFO, "Started");
+        }
 
     }
 
