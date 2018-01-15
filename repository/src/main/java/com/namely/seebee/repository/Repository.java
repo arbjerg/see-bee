@@ -103,7 +103,7 @@ public interface Repository extends AutoCloseable {
     /**
      * A Builder allowing construction of a {@code Repository}.
      */
-    interface Builder extends Function<Class<?>, Stream<Object>> {
+    interface Builder extends Function<Class<?>, Stream<? extends Object>> {
 
         interface HasWith<T> {
 
@@ -123,7 +123,7 @@ public interface Repository extends AutoCloseable {
              * is null or if the resulting component instance produced by the
              * constructor is null
              */
-            <T> Builder applying(Function<Function<Class<?>, Stream<Object>>, T> constructor);
+            <T> Builder applying(Function<Function<Class<?>, Stream<? extends Object>>, T> constructor);
 
             /**
              * Adds a component instance by getting it from the provided

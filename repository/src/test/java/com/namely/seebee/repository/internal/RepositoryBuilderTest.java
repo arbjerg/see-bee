@@ -79,7 +79,7 @@ public class RepositoryBuilderTest {
         private final String name;
         private final AtomicBoolean closed;
 
-        public TestComponentImpl(Function<Class<?>, Stream<Object>> builder) {
+        public TestComponentImpl(Function<Class<?>, Stream<? extends Object>> builder) {
             Integer first = (Integer) builder.apply(Integer.class).findFirst().get();
             this.name = "Olle " + first;
             this.closed = new AtomicBoolean();
@@ -107,7 +107,7 @@ public class RepositoryBuilderTest {
         private final String name;
         private final AtomicBoolean closed;
 
-        public <T extends Integer> TestComponentImpl2(Function<Class<? super T>, Stream<T>> builder) {
+        public <T extends Integer> TestComponentImpl2(Function<Class<? super T>, Stream<? extends T>> builder) {
             Integer first = builder.apply(Integer.class).findFirst().get();
             this.name = "Olle " + first;
             this.closed = new AtomicBoolean();

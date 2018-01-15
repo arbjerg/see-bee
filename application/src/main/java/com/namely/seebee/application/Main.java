@@ -32,8 +32,11 @@ public class Main {
     private static final Logger LOGGER = System.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
+        new Main().mainHelper(args);
+    }
 
-        try (Repository repo = RepositoryUtil.standardRepositoryBuilder().build()) {
+    protected void mainHelper(String[] args) {
+        try (Repository repo = buildRepository()) {
 
             System.out.println("TypeMapper components");
             repo.stream(Integer.class)
@@ -42,17 +45,21 @@ public class Main {
             final Configuration configuration = repo.getOrThrow(Configuration.class);
             final Version version = repo.getOrThrow(Version.class);
 
-            System.out.println(GreetingUtil.seeBeeGreetingMessage(version));
-            System.out.println();
-            System.out.println(GreetingUtil.jvmGreetingMessage(version));
-
+            GreetingUtil.printGreeting(version);
             LOGGER.log(Logger.Level.INFO, "Started");
-            if (!version.isProductionMode()) {
-                LOGGER.log(Logger.Level.WARNING, "This version is NOT INTENDED FOR PRODUCTION USE!");
-            }
 
         }
+    }
 
+    protected Repository.Builder addCustomComponents(Repository.Builder builder) {
+        return builder
+            .provide(String.class).with(Configuration.YAML_FILE_NAME_CONFIGURATION + "=custom_config.yml")
+            .provide(Configuration.class).applying(Configuration::yamlConfiguration);
+    }
+
+    private Repository buildRepository() {
+        return addCustomComponents(RepositoryUtil.standardRepositoryBuilder())
+            .build();
     }
 
 }

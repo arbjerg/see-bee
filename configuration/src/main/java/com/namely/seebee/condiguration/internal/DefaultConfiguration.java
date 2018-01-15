@@ -22,11 +22,11 @@ import com.namely.seebee.condiguration.Configuration;
  *
  * @author Per Minborg
  */
-public class DefaultConfiguration implements Configuration {
+public final class DefaultConfiguration implements Configuration {
 
     @Override
-    public String greetingLogo() {
-        return "See Bee";
+    public int schemaReloadIntervalSeconds() {
+        return 60;
     }
 
 }

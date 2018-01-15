@@ -74,7 +74,7 @@ public class DefaultRepositoryBuilder implements Repository.Builder {
         }
 
         @Override
-        public <T> Repository.Builder applying(Function<Function<Class<?>, Stream<Object>>, T> constructor) {
+        public <T> Repository.Builder applying(Function<Function<Class<?>, Stream<? extends Object>>, T> constructor) {
             requireNonNull(constructor);
             return with(constructor.apply(DefaultRepositoryBuilder.this));
         }

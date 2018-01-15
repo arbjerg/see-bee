@@ -17,6 +17,9 @@
 package com.namely.seebee.condiguration;
 
 import com.namely.seebee.condiguration.internal.DefaultConfiguration;
+import com.namely.seebee.condiguration.internal.yaml.YamlConfiguration;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Configuration component that is used to configure the See Bee application.
@@ -28,10 +31,16 @@ import com.namely.seebee.condiguration.internal.DefaultConfiguration;
  */
 public interface Configuration {
 
-    String greetingLogo();
+    String YAML_FILE_NAME_CONFIGURATION = "configuration.yaml.filename";
+    
+    int schemaReloadIntervalSeconds();
 
     static Configuration defaultConfiguration() {
         return new DefaultConfiguration();
+    }
+
+    static Configuration yamlConfiguration(Function<Class<?>, Stream<? extends Object>> builder) {
+        return new YamlConfiguration(builder);
     }
 
 }

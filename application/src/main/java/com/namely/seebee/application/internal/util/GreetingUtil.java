@@ -24,9 +24,22 @@ import com.namely.seebee.version.Version;
  */
 public final class GreetingUtil {
 
-    private GreetingUtil() { throw new UnsupportedOperationException(); }
+    private static final System.Logger LOGGER = System.getLogger(GreetingUtil.class.getName());
 
-    public static String seeBeeGreetingMessage(Version version) {
+    private GreetingUtil() {
+        throw new UnsupportedOperationException();
+    }
+
+    public static void printGreeting(Version version) {
+        System.out.println(GreetingUtil.seeBeeGreetingMessage(version));
+        System.out.println();
+        System.out.println(GreetingUtil.jvmGreetingMessage(version));
+        if (!version.isProductionMode()) {
+            LOGGER.log(System.Logger.Level.WARNING, "This version is NOT INTENDED FOR PRODUCTION USE!");
+        }
+    }
+
+    private static String seeBeeGreetingMessage(Version version) {
         String greeting
             = "   _____             ____            \n"
             + "  / ____|           |  _ \\           \n"
@@ -39,7 +52,7 @@ public final class GreetingUtil {
         return greeting;
     }
 
-    public static String jvmGreetingMessage(Version version) {
+    private static String jvmGreetingMessage(Version version) {
         return "Running under " + version.jvmImplementationName() + " by " + version.jvmImplementationVendor() + ", version " + version.jvmImplementationVersion();
     }
 
