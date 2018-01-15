@@ -16,6 +16,7 @@
  */
 package com.namely.seebee.application;
 
+import com.namely.seebee.application.internal.util.GreetingUtil;
 import com.namely.seebee.condiguration.Configuration;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,19 +50,9 @@ public class Main {
         final Configuration configuration = repo.getOrThrow(Configuration.class);
         final Version version = repo.getOrThrow(Version.class);
 
-        String greeting
-            = "   _____             ____            \n"
-            + "  / ____|           |  _ \\           \n"
-            + " | (___   ___  ___  | |_) | ___  ___ \n"
-            + "  \\___ \\ / _ \\/ _ \\ |  _ < / _ \\/ _ \\\n"
-            + "  ____) |  __/  __/ | |_) |  __/  __/\n"
-            + " |_____/ \\___|\\___| |____/ \\___|\\___|\n"
-            + " :: " + version.name() + " by " + version.vendor()
-            + " :: " + version.version();
-
-        System.out.println(greeting);
+        System.out.println(GreetingUtil.seeBeeGreetingMessage(version));
         System.out.println();
-        System.out.println("Running under " + version.jvmImplementationName() + " by " + version.jvmImplementationVendor() + ", version " + version.jvmImplementationVersion());
+        System.out.println(GreetingUtil.jvmGreetingMessage(version));
         
         LOGGER.log(Logger.Level.INFO, "Started");
 
