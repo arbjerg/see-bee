@@ -85,13 +85,15 @@ final class DefaultRepository implements Repository {
                 .map(AutoCloseable.class::cast)
                 .forEachOrdered(ac -> {
                     try {
+                        LOGGER.log(Logger.Level.INFO, "Closing " + ac.getClass().getName());
                         ac.close();
                     } catch (Exception e) {
-                        LOGGER.log(Logger.Level.ERROR, "Error while closeing " + ac.getClass().getName(), e);
+                        LOGGER.log(Logger.Level.ERROR, "Error while closing " + ac.getClass().getName(), e);
                     }
                 });
             componentList.clear();
             componentMap.clear();
+            LOGGER.log(Logger.Level.INFO, Repository.class.getSimpleName() + " was closed");
         }
     }
 
