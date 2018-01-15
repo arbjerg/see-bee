@@ -17,12 +17,14 @@
 package com.namely.seebee.repository.internal;
 
 import com.namely.seebee.repository.Repository;
+import java.lang.System.Logger;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import static java.util.Objects.requireNonNull;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 /**
@@ -31,17 +33,27 @@ import java.util.stream.Stream;
  */
 final class DefaultRepository implements Repository {
 
-    private final Map<Class<?>, List<Object>> components;
+    private static final Logger LOGGER = System.getLogger(DefaultRepository.class.getName());
 
-    DefaultRepository(Map<Class<?>, List<Object>> components) {
-        this.components = requireNonNull(components);
+    private final Map<Class<?>, List<Object>> componentMap;
+    private final List<Object> componentList;
+    private final AtomicBoolean closed;
+
+    DefaultRepository(
+        final Map<Class<?>, List<Object>> components,
+        final List<Object> componentList
+    ) {
+        this.componentMap = requireNonNull(components);
+        this.componentList = requireNonNull(componentList);
+        this.closed = new AtomicBoolean();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> Stream<T> stream(Class<T> type) {
         requireNonNull(type);
-        return (Stream<T>) components
+        assertNotClosed();
+        return (Stream<T>) componentMap
             .getOrDefault(type, Collections.emptyList())
             .stream();
     }
@@ -49,8 +61,9 @@ final class DefaultRepository implements Repository {
     @Override
     public <T> Optional<T> get(Class<T> type) {
         requireNonNull(type);
+        assertNotClosed();
         @SuppressWarnings("unchecked")
-        final List<T> list = (List<T>) components.getOrDefault(type, Collections.emptyList());
+        final List<T> list = (List<T>) componentMap.getOrDefault(type, Collections.emptyList());
         return list.isEmpty()
             ? Optional.empty()
             : Optional.of(list.get(list.size() - 1));
@@ -59,8 +72,33 @@ final class DefaultRepository implements Repository {
     @Override
     public <T> T getOrThrow(Class<T> type) {
         requireNonNull(type);
+        assertNotClosed();
         return get(type)
             .orElseThrow(NoSuchElementException::new);
+    }
+
+    @Override
+    public void close() {
+        if (closed.compareAndSet(false, true)) {
+            componentList.stream()
+                .filter(AutoCloseable.class::isInstance)
+                .map(AutoCloseable.class::cast)
+                .forEachOrdered(ac -> {
+                    try {
+                        ac.close();
+                    } catch (Exception e) {
+                        LOGGER.log(Logger.Level.ERROR, "Error while closeing " + ac.getClass().getName(), e);
+                    }
+                });
+            componentList.clear();
+            componentMap.clear();
+        }
+    }
+
+    private void assertNotClosed() {
+        if (closed.get()) {
+            throw new IllegalStateException("This " + Repository.class.getSimpleName() + " is closed.");
+        }
     }
 
 }

@@ -43,7 +43,7 @@ import java.util.stream.Stream;
  *
  * @author Per Minborg
  */
-public interface Repository {
+public interface Repository extends AutoCloseable {
 
     /**
      * Creates an returns a new {@link Stream} with all components that are
@@ -90,6 +90,15 @@ public interface Repository {
      * @throws NullPointerException if the provided {@code type} is null
      */
     <T> T getOrThrow(Class<T> type);
+
+    /**
+     * Closes this Repository and recursively closes all components that
+     * implements the {@link AutoCloseable} interface in reversed order from
+     * which they were provided.
+     *
+     */
+    @Override
+    public void close();
 
     /**
      * A Builder allowing construction of a {@code Repository}.

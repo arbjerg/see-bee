@@ -16,7 +16,6 @@
  */
 package com.namely.seebee.repository.internal;
 
-import com.namely.seebee.repository.internal.DefaultRepositoryBuilder;
 import java.util.List;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
@@ -24,6 +23,8 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import com.namely.seebee.repository.Repository;
+import java.util.concurrent.atomic.AtomicBoolean;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -32,43 +33,68 @@ import com.namely.seebee.repository.Repository;
 public class RepositoryBuilderTest {
 
     @Test
-    void test() {
+    void testGeneral() {
         final Repository.Builder instance = new DefaultRepositoryBuilder();
-        final Repository seeBee = instance
+        final Repository repo = instance
             .provide(Integer.class).with(0)
             .provide(Integer.class).getting(() -> 1)
             .provide(Integer.class).applying(b -> 3)
             .provide(TestComponent.class).applying(TestComponentImpl::new)
             .build();
 
-        final List<Integer> actual = seeBee.stream(Integer.class)
+        final List<Integer> actual = repo.stream(Integer.class)
             .collect(toList());
 
         assertEquals(List.of(0, 1, 2), actual);
 
-        final String name = seeBee.getOrThrow(TestComponent.class).getName();
-
+        final TestComponent testComponent = repo.getOrThrow(TestComponent.class);
+        final String name = testComponent.getName();
         assertEquals("Olle 0", name);
+    }
 
+    @Test
+    void testClose() {
+        final Repository repo = new DefaultRepositoryBuilder()
+            .provide(TestComponent.class).applying(TestComponentImpl::new)
+            .build();
+
+        final TestComponent testComponent = repo.getOrThrow(TestComponent.class);
+
+        repo.close();
+        assertTrue(testComponent.isClosed());
     }
 
     interface TestComponent {
 
         String getName();
+
+        boolean isClosed();
     }
 
-    static class TestComponentImpl implements TestComponent {
+    static class TestComponentImpl implements TestComponent, AutoCloseable {
 
         private final String name;
+        private final AtomicBoolean closed;
 
         public TestComponentImpl(Function<Class<?>, Stream<Object>> builder) {
             Integer first = (Integer) builder.apply(Integer.class).findFirst().get();
             this.name = "Olle " + first;
+            this.closed = new AtomicBoolean();
         }
 
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public void close() {
+            closed.set(true);
+        }
+
+        @Override
+        public boolean isClosed() {
+            return closed.get();
         }
 
     }

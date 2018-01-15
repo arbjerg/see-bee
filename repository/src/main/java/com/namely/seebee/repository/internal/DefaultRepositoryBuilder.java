@@ -36,10 +36,15 @@ import java.util.stream.Stream;
  */
 public class DefaultRepositoryBuilder implements Repository.Builder {
 
-    private final Map<Class<?>, List<Object>> components;
+    private final Map<Class<?>, List<Object>> componentMap;
+    /**
+     * This List is to keep track of the creation order. This is used by close()
+     */
+    private final List<Object> componentList;
 
     public DefaultRepositoryBuilder() {
-        this.components = new HashMap<>();
+        this.componentMap = new HashMap<>();
+        this.componentList = new ArrayList<>();
     }
 
     @Override
@@ -50,14 +55,14 @@ public class DefaultRepositoryBuilder implements Repository.Builder {
 
     @Override
     public Stream<Object> apply(Class<?> type) {
-        return components
+        return componentMap
             .getOrDefault(type, Collections.emptyList())
             .stream();
     }
 
     @Override
     public Repository build() {
-        return new DefaultRepository(components);
+        return new DefaultRepository(componentMap, componentList);
     }
 
     private class HasWithImpl<T> implements HasWith<T> {
@@ -83,7 +88,8 @@ public class DefaultRepositoryBuilder implements Repository.Builder {
         @Override
         public <T> Repository.Builder with(T instance) {
             requireNonNull(instance);
-            components.computeIfAbsent(clazz, $ -> new ArrayList<>()).add(instance);
+            componentMap.computeIfAbsent(clazz, $ -> new ArrayList<>()).add(instance);
+            componentList.add(instance);
             return DefaultRepositoryBuilder.this;
         }
 
