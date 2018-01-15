@@ -19,7 +19,7 @@ package com.namely.seebee.condiguration;
 import com.namely.seebee.condiguration.internal.DefaultConfiguration;
 
 /**
- * Configuration component that is used to configure the Application.
+ * Configuration component that is used to configure the See Bee application.
  * <p>
  * There can be many ways to obtain a custom configuration, for example from an
  * XML, JSON or YAML file.
@@ -28,7 +28,7 @@ import com.namely.seebee.condiguration.internal.DefaultConfiguration;
  */
 public interface Configuration {
 
-    String getGreetingLogo();
+    String greetingLogo();
 
     static Configuration defaultConfiguration() {
         return new DefaultConfiguration();

@@ -37,6 +37,7 @@
         <module>repository</module>
         <module>typemapper</module>
         <module>typemapper-standard</module>
+        <module>version</module>
         <module>application</module>
     </modules>
 

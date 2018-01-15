@@ -9,7 +9,7 @@ import com.namely.seebee.condiguration.Configuration;
 public class DefaultConfiguration implements Configuration {
 
     @Override
-    public String getGreetingLogo() {
+    public String greetingLogo() {
         return "See Bee";
     }
 

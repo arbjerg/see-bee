@@ -20,12 +20,16 @@ import com.namely.seebee.condiguration.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 import com.namely.seebee.repository.Repository;
+import com.namely.seebee.version.Version;
+import java.lang.System.Logger;
 
 /**
  *
  * @author Per Minborg
  */
 public class Main {
+
+    private static final Logger LOGGER = System.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
 
@@ -35,15 +39,31 @@ public class Main {
             .provide(Integer.class).with(1)
             .provide(Integer.class).with(2)
             .provide(Configuration.class).getting(Configuration::defaultConfiguration)
+            .provide(Version.class).getting(Version::defaultVersion)
             .build();
 
         System.out.println("TypeMapper components");
         repo.stream(Integer.class)
             .forEach(System.out::println);
+
+        final Configuration configuration = repo.getOrThrow(Configuration.class);
+        final Version version = repo.getOrThrow(Version.class);
+
+        String greeting
+            = "   _____             ____            \n"
+            + "  / ____|           |  _ \\           \n"
+            + " | (___   ___  ___  | |_) | ___  ___ \n"
+            + "  \\___ \\ / _ \\/ _ \\ |  _ < / _ \\/ _ \\\n"
+            + "  ____) |  __/  __/ | |_) |  __/  __/\n"
+            + " |_____/ \\___|\\___| |____/ \\___|\\___|\n"
+            + " :: " + version.name() + " by " + version.vendor()
+            + " :: " + version.version();
+
+        System.out.println(greeting);
+        System.out.println();
+        System.out.println("Running under " + version.jvmImplementationName() + " by " + version.jvmImplementationVendor() + ", version " + version.jvmImplementationVersion());
         
-        Configuration configuration = repo.getOrThrow(Configuration.class);
-        
-        System.out.println(configuration.getGreetingLogo());
+        LOGGER.log(Logger.Level.INFO, "Started");
 
     }
 

@@ -14,10 +14,32 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-module com.namely.seebee.application {
-    requires com.namely.seebee.configuration;
-    requires com.namely.seebee.repository;
-    requires com.namely.seebee.typemapper;
-    requires com.namely.seebee.typemaper.standard;
-    requires com.namely.seebee.version;
+package com.namely.seebee.version;
+
+import com.namely.seebee.version.internal.DefaultVersion;
+
+/**
+ * Version component that is used to hold the version of the application.
+ * <p>
+ *
+ * @author Per Minborg
+ */
+public interface Version {
+
+    String  name();
+
+    String version();
+    
+    String vendor();
+    
+    String jvmImplementationVersion();
+    
+    String jvmImplementationVendor();
+    
+    String jvmImplementationName();
+
+    static Version defaultVersion() {
+        return new DefaultVersion();
+    }
+
 }
