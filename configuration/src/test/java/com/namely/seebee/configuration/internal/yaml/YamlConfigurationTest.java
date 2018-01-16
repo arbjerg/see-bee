@@ -34,6 +34,7 @@ final class YamlConfigurationTest {
         System.out.println("File is " + tmpFile);
 
         final List<String> lines = List.of(
+            "# This is a comment",
             SCHEMA_RELOAD_INTERVAL_SECONDS_KEY + ": " + TEST_VALUE_FOR_SCHEMA_RELOADE_INTERVAL_SECONDS,
             JDBC_USERNAME_KEY + ": " + TEST_VALUE_FOR_JDBC_USERNAME,
             JDBC_PASSWORD_KEY + ": " + TEST_VALUE_FOR_JDBC_PASSWORD
