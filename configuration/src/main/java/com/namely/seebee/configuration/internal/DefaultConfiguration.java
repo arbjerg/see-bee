@@ -17,6 +17,7 @@
 package com.namely.seebee.configuration.internal;
 
 import com.namely.seebee.configuration.Configuration;
+import java.util.Optional;
 
 /**
  *
@@ -27,6 +28,21 @@ public final class DefaultConfiguration implements Configuration {
     @Override
     public int schemaReloadIntervalSeconds() {
         return 60;
+    }
+
+    @Override
+    public Optional<String> jdbcUsername() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> jdbcPassword() {
+        return Optional.empty();
+    }
+
+    @Override
+    public String toString() {
+        return ConfigurationUtil.toString(this);
     }
 
 }

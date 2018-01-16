@@ -18,6 +18,7 @@ package com.namely.seebee.configuration;
 
 import com.namely.seebee.configuration.internal.DefaultConfiguration;
 import com.namely.seebee.configuration.internal.yaml.YamlConfiguration;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -31,9 +32,17 @@ import java.util.stream.Stream;
  */
 public interface Configuration {
 
-    String YAML_FILE_NAME_CONFIGURATION = "configuration.yaml.filename";
+    String SCHEMA_RELOAD_INTERVAL_SECONDS_KEY ="schema.reload.interval.seconds";
+    String JDBC_USERNAME_KEY ="jdbc.username";
+    String JDBC_PASSWORD_KEY ="jdbc.password";
     
+    String YAML_FILE_NAME_CONFIGURATION = "configuration.yaml.filename";
+
     int schemaReloadIntervalSeconds();
+
+    Optional<String> jdbcUsername();
+
+    Optional<String> jdbcPassword();
 
     static Configuration defaultConfiguration() {
         return new DefaultConfiguration();

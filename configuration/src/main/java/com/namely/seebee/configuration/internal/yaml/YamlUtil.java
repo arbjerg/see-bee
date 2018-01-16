@@ -5,15 +5,17 @@ import java.lang.System.Logger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
  *
  * @author Per Minborg
  */
-public final class YamlUtil {
+final class YamlUtil {
 
     private static final Logger LOGGER = System.getLogger(YamlUtil.class.getName());
 
@@ -21,20 +23,21 @@ public final class YamlUtil {
         throw new UnsupportedOperationException();
     }
 
-    public Map<String, Object> parse(Path path) throws IOException {
+    static Map<String, Object> parse(Path path) throws IOException {
         return parse(
             Files.lines(path, StandardCharsets.UTF_8).iterator(),
             new HashMap<>(),
-            0
+            0,
+            null
         );
     }
 
-    protected static Map<String, Object> parse(Iterator<String> lines, Map<String, Object> map, int indent) {
-        if (lines.hasNext()) {
-            final String next = lines.next();
-            int tagIndent = initialSpaces(next);
-            final String tag = next.trim();
-            parseNext(lines, map, indent, tag, tagIndent);
+    protected static Map<String, Object> parse(Iterator<String> lines, Map<String, Object> map, int indent, String currentTag) {
+        while (lines.hasNext()) {
+            final String line = lines.next();
+            int lineIndent = initialSpaces(line);
+            final String tLine = line.trim();
+            parseNext(lines, map, indent, tLine, lineIndent, currentTag);
         }
         return map;
     }
@@ -43,21 +46,25 @@ public final class YamlUtil {
         final Iterator<String> lines,
         final Map<String, Object> map,
         final int indent,
-        final String tag,
-        final int tagIndent
+        final String line,
+        final int lineIndent,
+        final String currentTag
     ) {
-        if (tag.endsWith(":")) {
+        if (line.endsWith(":")) {
             // Map
-            final Map<String, Object> subMap = new HashMap<>();
-            map.put(removeLast(tag), subMap);
-            parse(lines, subMap, tagIndent);
-        } else if (tag.startsWith("-")) {
+            final String tag = removeLast(line);
+            parse(lines, map, lineIndent, tag);
+        } else if (line.startsWith("-")) {
             // List
-
+            final String tag = removeFirst(line).trim();
+            @SuppressWarnings("unchecked")
+            final List<String> list = (List<String>) map
+                .computeIfAbsent(currentTag, $ -> new ArrayList<String>());
+            list.add(tag);
         } else {
             // Scalar
-            final String[] parts = tag.split("");
-            map.put(parts[0], removeQuoteIfExists(parts[1]));
+            final String[] parts = line.split("\\s+");
+            map.put(removeLast(parts[0]), removeQuoteIfExists(parts[1].trim()));
         }
     }
 
@@ -74,6 +81,13 @@ public final class YamlUtil {
             throw new IllegalStateException("Cannot remove last from an empty String");
         }
         return s.substring(0, s.length() - 1);
+    }
+
+    private static String removeFirst(String s) {
+        if (s.isEmpty()) {
+            throw new IllegalStateException("Cannot remove first from an empty String");
+        }
+        return s.substring(1, s.length());
     }
 
     private static String removeQuoteIfExists(String s) {
