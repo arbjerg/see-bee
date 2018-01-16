@@ -21,6 +21,7 @@ import com.namely.seebee.configuration.ConfigurationException;
 import com.namely.seebee.configuration.internal.ConfigurationUtil;
 import java.io.IOException;
 import java.lang.System.Logger;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
@@ -58,11 +59,12 @@ public final class YamlConfiguration implements Configuration {
             .reduce((a, b) -> b)
             .map(s -> s.split("=")[1])
             .orElse(DEFAULT_FILE_NAME);
+        final Path path = Paths.get(fileName);
         try {
-            this.configMap = YamlUtil.parse(Paths.get(fileName));
+            this.configMap = YamlUtil.parse(path);
         } catch (IOException ioe) {
             LOGGER.log(Logger.Level.ERROR, ioe);
-            throw new ConfigurationException("Unable to read the file " + fileName, ioe);
+            throw new ConfigurationException("Unable to read the file " + fileName + " (" + path.toAbsolutePath() + ")", ioe);
         }
         //
         this.schemaReloadIntervalSeconds = readInt(SCHEMA_RELOAD_INTERVAL_SECONDS_KEY, defaultConfiguration::schemaReloadIntervalSeconds);

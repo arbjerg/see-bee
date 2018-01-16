@@ -53,8 +53,9 @@ public class Main {
 
     protected Repository.Builder addCustomComponents(Repository.Builder builder) {
         return builder
-            .provide(String.class).with(Configuration.YAML_FILE_NAME_CONFIGURATION + "=custom_config.yml")
-            .provide(Configuration.class).applying(Configuration::yamlConfiguration);
+//            .provide(String.class).with(Configuration.YAML_FILE_NAME_CONFIGURATION + "=custom_config.yml")
+//            .provide(Configuration.class).applying(Configuration::yamlConfiguration)
+            ;
     }
 
     private Repository buildRepository() {
