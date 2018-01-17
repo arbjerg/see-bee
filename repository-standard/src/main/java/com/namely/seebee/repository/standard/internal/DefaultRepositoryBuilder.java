@@ -122,6 +122,7 @@ public class DefaultRepositoryBuilder implements Repository.Builder {
         @Override
         public <T> Repository.Builder with(T instance) {
             requireNonNull(instance);
+            clazz.cast(instance); // Protect from untyped injection
             componentMap.computeIfAbsent(clazz, $ -> new ArrayList<>()).add(instance);
             componentList.add(instance);
             return DefaultRepositoryBuilder.this;
