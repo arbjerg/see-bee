@@ -23,6 +23,6 @@ package com.namely.seebee.typemapper;
  */
 public interface TypeMapper<T> {
  
-    Class<T> getType();
+    Class<T> javaType();
     
 }
