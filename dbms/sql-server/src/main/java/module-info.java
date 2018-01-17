@@ -15,5 +15,7 @@
  * the License.
  */
 module com.namely.seebee.dbms.sqlserver {
+    requires com.namely.seebee.dbmstype;
+    
     exports com.namely.seebee.dbms.sqlserver;
 }

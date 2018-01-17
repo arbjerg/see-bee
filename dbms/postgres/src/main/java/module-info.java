@@ -15,5 +15,7 @@
  * the License.
  */
 module com.namely.seebee.dbms.postgres {
+    requires com.namely.seebee.dbmstype;
+    
     exports com.namely.seebee.dbms.postgres;
 }
