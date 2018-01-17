@@ -16,10 +16,15 @@
  */
 package com.namely.seebee.typemapper;
 
+import java.util.function.Supplier;
+
 /**
  *
  * @author Per Minborg
  */
-public interface ColumnValue {
+public interface ColumnValue<T> extends Supplier<T> {
+ 
+    Class<T> javaType();
+    
     
 }
