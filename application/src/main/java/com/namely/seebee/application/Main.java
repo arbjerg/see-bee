@@ -19,7 +19,8 @@ package com.namely.seebee.application;
 import com.namely.seebee.application.internal.util.GreetingUtil;
 import com.namely.seebee.application.internal.util.RepositoryUtil;
 import com.namely.seebee.configuration.Configuration;
-import com.namely.seebee.repository.Repository;
+import com.namely.seebee.repository.standard.Repository;
+
 import com.namely.seebee.version.Version;
 import java.lang.System.Logger;
 
@@ -53,8 +54,8 @@ public class Main {
 
     protected Repository.Builder addCustomComponents(Repository.Builder builder) {
         return builder
-//            .provide(String.class).with(Configuration.YAML_FILE_NAME_CONFIGURATION + "=custom_config.yml")
-//            .provide(Configuration.class).applying(Configuration::yamlConfiguration)
+            .provide(String.class).with(Configuration.YAML_FILE_NAME_CONFIGURATION + "=custom_config.yml")
+            .provide(Configuration.class).applying(b -> Configuration.yamlConfiguration(b))
             ;
     }
 

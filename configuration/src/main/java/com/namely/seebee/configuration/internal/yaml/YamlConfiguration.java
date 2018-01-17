@@ -19,16 +19,16 @@ package com.namely.seebee.configuration.internal.yaml;
 import com.namely.seebee.configuration.Configuration;
 import com.namely.seebee.configuration.ConfigurationException;
 import com.namely.seebee.configuration.internal.ConfigurationUtil;
+import com.namely.seebee.repository.HasComponents;
+import com.namely.seebee.repository.StringParameter;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  *
@@ -49,16 +49,16 @@ public final class YamlConfiguration implements Configuration {
     private final String jdbcUsername;
 
     @SuppressWarnings("unchecked")
-    public YamlConfiguration(Function<Class<?>, Stream<? extends Object>> builder) {
+    public YamlConfiguration(HasComponents builder) {
         // Build this Configuration from the last know Configuration
-        this.defaultConfiguration = ((Stream<Configuration>) builder.apply(Configuration.class))
+        this.defaultConfiguration = builder.stream(Configuration.class)
             .reduce((a, b) -> b)
             .orElse(Configuration.defaultConfiguration());
-        this.fileName = ((Stream<String>) builder.apply(String.class))
-            .filter(s -> s.startsWith(YAML_FILE_NAME_CONFIGURATION))
-            .reduce((a, b) -> b)
-            .map(s -> s.split("=")[1])
+
+        this.fileName = builder.getParameter(StringParameter.class, Configuration.YAML_FILE_NAME_CONFIGURATION)
+            .map(StringParameter::get)
             .orElse(DEFAULT_FILE_NAME);
+
         final Path path = Paths.get(fileName);
         try {
             this.configMap = YamlUtil.parse(path);

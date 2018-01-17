@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>typemapper-standard</artifactId>
     <packaging>jar</packaging>
-    <name>Type Mapper Standard</name>
+    <name>Type Mapper Standrd</name>
 
     <parent>
         <groupId>com.namely.seebee</groupId>

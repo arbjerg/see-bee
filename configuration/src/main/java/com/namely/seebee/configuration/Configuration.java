@@ -18,9 +18,8 @@ package com.namely.seebee.configuration;
 
 import com.namely.seebee.configuration.internal.DefaultConfiguration;
 import com.namely.seebee.configuration.internal.yaml.YamlConfiguration;
+import com.namely.seebee.repository.HasComponents;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * Configuration component that is used to configure the See Bee application.
@@ -48,7 +47,7 @@ public interface Configuration {
         return new DefaultConfiguration();
     }
 
-    static Configuration yamlConfiguration(Function<Class<?>, Stream<? extends Object>> builder) {
+    static Configuration yamlConfiguration(HasComponents builder) {
         return new YamlConfiguration(builder);
     }
 

@@ -17,7 +17,8 @@
 package com.namely.seebee.application.internal.util;
 
 import com.namely.seebee.configuration.Configuration;
-import com.namely.seebee.repository.Repository;
+import com.namely.seebee.repository.standard.Repository;
+
 import com.namely.seebee.version.Version;
 
 /**

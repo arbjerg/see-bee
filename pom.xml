@@ -33,12 +33,14 @@
     
     <!-- Modules -->
     <modules>
+        <module>api</module>
         <module>configuration</module>
-        <module>repository</module>
-        <module>typemapper</module>
+        <module>dbms</module>
+        <module>repository-standard</module>
         <module>typemapper-standard</module>
         <module>version</module>
         <module>application</module>
+        <module>test</module>
     </modules>
 
     <organization>

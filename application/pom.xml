@@ -35,16 +35,21 @@
             <artifactId>configuration</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>com.namely.seebee</groupId>
             <artifactId>repository</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
+            <groupId>com.namely.seebee</groupId>
+            <artifactId>repository-standard</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+<!--        <dependency>
             <groupId>com.namely.seebee</groupId>
             <artifactId>typemapper</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.namely.seebee</groupId>
             <artifactId>typemapper-standard</artifactId>
