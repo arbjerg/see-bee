@@ -25,7 +25,7 @@ import com.namely.seebee.typemapper.TypeMapper;
 public class StringTypeMapper implements TypeMapper<String> {
 
     @Override
-    public Class<String> getType() {
+    public Class<String> javaType() {
         return String.class;
     }
 

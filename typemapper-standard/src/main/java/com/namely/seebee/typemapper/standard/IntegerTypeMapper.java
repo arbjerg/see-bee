@@ -25,7 +25,7 @@ import com.namely.seebee.typemapper.TypeMapper;
 public class IntegerTypeMapper implements TypeMapper<Integer> {
 
     @Override
-    public Class<Integer> getType() {
+    public Class<Integer> javaType() {
         return Integer.class;
     }
 
