@@ -19,12 +19,36 @@ package com.namely.seebee.typemapper;
 import java.util.function.Supplier;
 
 /**
+ * Generic immutable column value container that may hold any type of column
+ * value.
  *
  * @author Per Minborg
+ * @param <E> the Java type obtained via JDBC
  */
-public interface ColumnValue<T> extends Supplier<T> {
- 
-    Class<T> javaType();
-    
-    
+public interface ColumnValue<E> extends Supplier<E>, HasJavaType<E> {
+
+    /**
+     * Returns the container value.
+     *
+     * @return the container value
+     */
+    @Override
+    E get();
+
+    /**
+     * Returns if the container value is null.
+     *
+     * @return if the container value is null
+     */
+    boolean isNull();
+
+    /**
+     * Serializes the container value to an external target using the provided
+     * args.
+     *
+     * @param arg to be specified
+     */
+    //void serialize(Consumer<? super ColumnValue<? extends E>> serializer);
+    void serialize(Object arg);
+
 }

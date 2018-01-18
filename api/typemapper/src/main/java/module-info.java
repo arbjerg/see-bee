@@ -15,5 +15,7 @@
  * the License.
  */
 module com.namely.seebee.typemapper {
+    requires transitive java.sql;
+    
     exports com.namely.seebee.typemapper;
 }

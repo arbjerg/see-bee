@@ -18,11 +18,50 @@ package com.namely.seebee.typemapper;
 
 /**
  *
+ * TypeMapper that can provide factories for some given set of {@link ColumnMetaData
+ * } types.
+ *
  * @author Per Minborg
- * @param <T> the Java type obtained via JDBC
  */
-public interface TypeMapper<T> {
- 
-    Class<T> javaType();
-    
+public interface TypeMapper {
+
+    /**
+     * Creates and returns a new a new {@link ColumnValueFactory } that can be
+     * used to create {@link ColumnValue } objects for the provided {@code columnMetaData
+     * }.
+     *
+     * @param columnMetaData to be used to determine the column type
+     * @return a new a new {@link ColumnValueFactory } that can be used to
+     * create {@link ColumnValue } objects for the provided {@code columnMetaData
+     * }
+     *
+     * @throws NullPointerException if the provided {@code columnMetaData} is
+     * null
+     * @throws TypeMapperException if the provided {@code columnMetaData} cannot
+     * be mapped to any {@link ColumnValueFactory}
+     *
+     */
+    ColumnValueFactory<?> createFactory(ColumnMetaData columnMetaData);
+
+    /**
+     * Creates and returns a new a new {@link ColumnValueFactory } that can be
+     * used to create {@link ColumnValue } objects for the provided {@code columnMetaData
+     * } of the given {@code type}.
+     *
+     * @param <E> type of value containers ultimately produced by the factory
+     * @param type the class of the value containers ultimately produced by the
+     * factory
+     * @param columnMetaData to be used to determine the column type
+     * @return a new a new {@link ColumnValueFactory } that can be used to
+     * create {@link ColumnValue } objects for the provided {@code columnMetaData
+     * }
+     *
+     * @throws NullPointerException if the provided {@code columnMetaData} is
+     * null
+     * @throws TypeMapperException if the provided {@code columnMetaData} cannot
+     * be mapped to any {@link ColumnValueFactory}
+     *
+     */
+    <E> ColumnValueFactory<E> createFactory(Class<E> type, ColumnMetaData columnMetaData);
+
 }
