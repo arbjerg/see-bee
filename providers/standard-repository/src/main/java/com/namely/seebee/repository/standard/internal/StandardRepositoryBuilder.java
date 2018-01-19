@@ -16,10 +16,10 @@
  */
 package com.namely.seebee.repository.standard.internal;
 
-import com.namely.seebee.repository.HasComponents;
-import com.namely.seebee.repository.Parameter;
-import com.namely.seebee.repository.standard.Repository;
-import com.namely.seebee.repository.standard.Repository.Builder.HasWith;
+import com.namely.seebee.repositoryclient.HasComponents;
+import com.namely.seebee.repositoryclient.Parameter;
+import com.namely.seebee.repository.Repository;
+import com.namely.seebee.repository.Repository.Builder.HasWith;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  *
  * @author Per Minborg
  */
-public class DefaultRepositoryBuilder implements Repository.Builder {
+public class StandardRepositoryBuilder implements Repository.Builder {
 
     private final Map<Class<?>, List<Object>> componentMap;
     /**
@@ -44,7 +44,7 @@ public class DefaultRepositoryBuilder implements Repository.Builder {
     private final List<Object> componentList;
     private final AtomicBoolean closed;
 
-    public DefaultRepositoryBuilder() {
+    public StandardRepositoryBuilder() {
         this.componentMap = new HashMap<>();
         this.componentList = new ArrayList<>();
         this.closed = new AtomicBoolean();
@@ -83,7 +83,7 @@ public class DefaultRepositoryBuilder implements Repository.Builder {
     @Override
     public Repository build() {
         if (closed.compareAndSet(false, true)) {
-            return new DefaultRepository(componentMap, componentList);
+            return new StandardRepository(componentMap, componentList);
         } else {
             throw newClosedException();
         }
@@ -110,7 +110,7 @@ public class DefaultRepositoryBuilder implements Repository.Builder {
         @Override
         public <T> Repository.Builder applying(Function<HasComponents, T> constructor) {
             requireNonNull(constructor);
-            return with(constructor.apply(DefaultRepositoryBuilder.this));
+            return with(constructor.apply(StandardRepositoryBuilder.this));
         }
 
         @Override
@@ -125,7 +125,7 @@ public class DefaultRepositoryBuilder implements Repository.Builder {
             clazz.cast(instance); // Protect from untyped injection
             componentMap.computeIfAbsent(clazz, $ -> new ArrayList<>()).add(instance);
             componentList.add(instance);
-            return DefaultRepositoryBuilder.this;
+            return StandardRepositoryBuilder.this;
         }
 
     }

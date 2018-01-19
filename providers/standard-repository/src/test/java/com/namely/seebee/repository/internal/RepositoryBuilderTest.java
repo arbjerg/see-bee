@@ -16,18 +16,18 @@
  */
 package com.namely.seebee.repository.internal;
 
-import com.namely.seebee.repository.HasComponents;
-import com.namely.seebee.repository.IntParameter;
-import com.namely.seebee.repository.StringParameter;
-import com.namely.seebee.repository.standard.internal.DefaultRepositoryBuilder;
+import com.namely.seebee.repository.Repository;
+import com.namely.seebee.repository.standard.Parameters;
+import com.namely.seebee.repositoryclient.HasComponents;
+import com.namely.seebee.repositoryclient.IntParameter;
+import com.namely.seebee.repositoryclient.StringParameter;
+import com.namely.seebee.repository.standard.internal.StandardRepositoryBuilder;
 import java.util.List;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
-import com.namely.seebee.repository.standard.Parameters;
-import com.namely.seebee.repository.standard.Repository;
 import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,7 +39,7 @@ public class RepositoryBuilderTest {
 
     @Test
     void testGeneral() {
-        final Repository.Builder instance = new DefaultRepositoryBuilder();
+        final Repository.Builder instance = new StandardRepositoryBuilder();
         final Repository repo = instance
             .provide(Integer.class).with(0)
             .provide(Integer.class).getting(() -> 1)
@@ -66,7 +66,7 @@ public class RepositoryBuilderTest {
     
         @Test
     void testParameter() {
-        try (Repository repo = new DefaultRepositoryBuilder()
+        try (Repository repo = new StandardRepositoryBuilder()
             .provide(IntParameter.class).with(Parameters.of("foo", 42))
             .provide(StringParameter.class).with(Parameters.of("bar", "baz"))
             .build()) {
@@ -84,7 +84,7 @@ public class RepositoryBuilderTest {
     @Test
     void testClose() {
         final TestComponent testComponent;
-        try (Repository repo = new DefaultRepositoryBuilder()
+        try (Repository repo = new StandardRepositoryBuilder()
             .provide(Integer.class).with(0)
             .provide(TestComponent.class).applying(TestComponentImpl::new)
             .build()) {

@@ -17,7 +17,7 @@
 module com.namely.seebee.configuration.yaml {
     requires transitive com.namely.seebee.configuration;
     requires com.namely.seebee.configuration.support;
-    requires transitive com.namely.seebee.repository;
+    requires transitive com.namely.seebee.repositoryclient;
     
     exports com.namely.seebee.configuration.yaml;
 }

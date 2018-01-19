@@ -32,6 +32,11 @@
     <dependencies>
         <dependency>
             <groupId>com.namely.seebee</groupId>
+            <artifactId>repositoryclient</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.namely.seebee</groupId>
             <artifactId>repository</artifactId>
             <version>${project.version}</version>
         </dependency>

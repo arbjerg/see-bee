@@ -15,5 +15,7 @@
  * the License.
  */
 module com.namely.seebee.repository {
+    requires transitive com.namely.seebee.repositoryclient;
+    
     exports com.namely.seebee.repository;
 }

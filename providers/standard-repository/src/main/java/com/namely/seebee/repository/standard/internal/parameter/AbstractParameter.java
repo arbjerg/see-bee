@@ -16,7 +16,7 @@
  */
 package com.namely.seebee.repository.standard.internal.parameter;
 
-import com.namely.seebee.repository.Parameter;
+import com.namely.seebee.repositoryclient.Parameter;
 import static java.util.Objects.requireNonNull;
 
 /**

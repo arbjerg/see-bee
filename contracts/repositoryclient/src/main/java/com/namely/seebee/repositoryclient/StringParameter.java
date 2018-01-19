@@ -14,12 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.namely.seebee.repository;
-
-import java.util.function.IntSupplier;
+package com.namely.seebee.repositoryclient;
 
 /**
  *
  * @author Per Minborg
  */
-public interface IntParameter extends Parameter<Integer>, IntSupplier {}
+public interface StringParameter extends Parameter<String> {}

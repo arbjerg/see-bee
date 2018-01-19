@@ -16,7 +16,7 @@
  */
 package com.namely.seebee.repository.standard.internal;
 
-import com.namely.seebee.repository.Parameter;
+import com.namely.seebee.repositoryclient.Parameter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

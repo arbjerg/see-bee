@@ -14,25 +14,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.namely.seebee.configuration.yaml;
-
-import com.namely.seebee.configuration.Configuration;
-import com.namely.seebee.configuration.yaml.internal.YamlConfiguration;
-import com.namely.seebee.repositoryclient.HasComponents;
-
-
-/**
- *
- * @author Per Minborg
- */
-public final class YamlConfigurations {
-
-    private YamlConfigurations() {
-        throw new UnsupportedOperationException();
-    }
-
-    public static Configuration create(HasComponents builder) {
-        return new YamlConfiguration(builder);
-    }
-
+module com.namely.seebee.repositoryclient {
+    exports com.namely.seebee.repositoryclient;
 }

@@ -14,10 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.namely.seebee.repository.standard;
+package com.namely.seebee.repository;
 
-import com.namely.seebee.repository.HasComponents;
-import com.namely.seebee.repository.standard.internal.DefaultRepositoryBuilder;
+import com.namely.seebee.repositoryclient.HasComponents;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -132,12 +131,5 @@ public interface Repository extends HasComponents, AutoCloseable {
         Repository build();
     }
 
-    /**
-     * Creates and returns a new default empty {@code Builder}.
-     *
-     * @return a new default empty {@code @Builder}
-     */
-    static Builder builder() {
-        return new DefaultRepositoryBuilder();
-    }
+    
 }

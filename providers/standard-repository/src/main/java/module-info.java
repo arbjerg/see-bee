@@ -16,6 +16,6 @@
  */
 module com.namely.seebee.repository.standard {
     requires transitive com.namely.seebee.repository;
-
+    
     exports com.namely.seebee.repository.standard;
 }

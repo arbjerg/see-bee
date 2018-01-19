@@ -18,7 +18,8 @@ package com.namely.seebee.application.internal.util;
 
 import com.namely.seebee.configuration.Configuration;
 import com.namely.seebee.configuration.standard.StandardConfigurations;
-import com.namely.seebee.repository.standard.Repository;
+import com.namely.seebee.repository.Repository;
+import com.namely.seebee.repository.standard.StandardRepositories;
 import com.namely.seebee.softwareinfo.SoftwareInfo;
 
 import com.namely.seebee.softwareinfo.standard.StandardSoftwareInfos;
@@ -32,7 +33,7 @@ public  final class RepositoryUtil {
     private RepositoryUtil() { throw new UnsupportedOperationException(); }
     
     public static Repository.Builder standardRepositoryBuilder() {
-        return Repository.builder()
+        return StandardRepositories.builder()
             .provide(Configuration.class).getting(StandardConfigurations::create)
             .provide(SoftwareInfo.class).getting(StandardSoftwareInfos::seeBee)
             .provide(SoftwareInfo.class).getting(StandardSoftwareInfos::java);

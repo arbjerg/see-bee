@@ -16,10 +16,10 @@
  */
 package com.namely.seebee.repository.standard;
 
-import com.namely.seebee.repository.IntParameter;
-import com.namely.seebee.repository.StringParameter;
-import com.namely.seebee.repository.standard.internal.parameter.DefaultIntParameter;
-import com.namely.seebee.repository.standard.internal.parameter.DefaultStringParameter;
+import com.namely.seebee.repositoryclient.IntParameter;
+import com.namely.seebee.repositoryclient.StringParameter;
+import com.namely.seebee.repository.standard.internal.parameter.StandardIntParameter;
+import com.namely.seebee.repository.standard.internal.parameter.StandardStringParameter;
 
 /**
  *
@@ -32,11 +32,11 @@ public final class Parameters {
     }
 
     public static IntParameter of(String name, int value) {
-        return new DefaultIntParameter(name, value);
+        return new StandardIntParameter(name, value);
     }
 
     public static StringParameter of(String name, String value) {
-        return new DefaultStringParameter(name, value);
+        return new StandardStringParameter(name, value);
     }
 
 }

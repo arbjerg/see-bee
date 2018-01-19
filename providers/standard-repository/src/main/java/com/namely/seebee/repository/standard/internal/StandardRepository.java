@@ -16,8 +16,8 @@
  */
 package com.namely.seebee.repository.standard.internal;
 
-import com.namely.seebee.repository.Parameter;
-import com.namely.seebee.repository.standard.Repository;
+import com.namely.seebee.repository.Repository;
+import com.namely.seebee.repositoryclient.Parameter;
 import java.lang.System.Logger;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +30,15 @@ import java.util.stream.Stream;
  *
  * @author Per Minborg
  */
-final class DefaultRepository implements Repository {
+final class StandardRepository implements Repository {
 
-    private static final Logger LOGGER = System.getLogger(DefaultRepository.class.getName());
+    private static final Logger LOGGER = System.getLogger(StandardRepository.class.getName());
 
     private final Map<Class<?>, List<Object>> componentMap;
     private final List<Object> componentList;
     private final AtomicBoolean closed;
 
-    DefaultRepository(
+    StandardRepository(
         final Map<Class<?>, List<Object>> components,
         final List<Object> componentList
     ) {
