@@ -27,7 +27,7 @@ import com.namely.seebee.repository.standard.internal.parameter.DefaultStringPar
  */
 public final class Parameters {
 
-    public Parameters() {
+    private Parameters() {
         throw new UnsupportedOperationException();
     }
 

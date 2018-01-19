@@ -24,12 +24,32 @@ package com.namely.seebee.softwareinfo;
  */
 public interface SoftwareInfo {
 
+    /**
+     * Returns the name of the software component.
+     * 
+     * @return the name of the software component
+     */
     String  name();
 
+    /**
+     * Returns the version of the software component.
+     * 
+     * @return the version of the software component
+     */
     String version();
     
+     /**
+     * Returns the name of the vendor of the software component.
+     * 
+     * @return the name of the vendor of the software component
+     */
     String vendor();
     
+    /**
+     * Returns if this software component can be used in production systems.
+     * 
+     * @return if this software component can be used in production systems
+     */
     boolean isProductionMode();
 
 }

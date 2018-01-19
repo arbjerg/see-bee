@@ -19,9 +19,10 @@ package com.namely.seebee.repository;
 import java.util.function.Supplier;
 
 /**
- *
+ * Generic parameter container that can be used to configure components.
+ * 
  * @author Per Minborg
- * @param <T> the type of the parameter
+ * @param <T> the container type of the parameter
  */
 public interface Parameter<T> extends Supplier<T> {
 
