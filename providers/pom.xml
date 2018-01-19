@@ -27,7 +27,7 @@
     <parent>
         <groupId>com.namely.seebee</groupId>
         <artifactId>seebee-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
 
     <name>Providers</name>
