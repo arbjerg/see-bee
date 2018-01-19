@@ -1,4 +1,4 @@
-/**
+ /**
  *
  * Copyright (c) 2017-2018, Namely, Inc. All Rights Reserved.
  *
@@ -16,18 +16,18 @@
  */
 package com.namely.seebee.repository.standard.internal.parameter;
 
-import com.namely.seebee.repository.IntParameter;
+import com.namely.seebee.repositoryclient.IntParameter;
 import static java.util.Objects.requireNonNull;
 
 /**
  *
  * @author Per Minborg
  */
-public final class DefaultIntParameter extends AbstractParameter<Integer> implements IntParameter {
+public final class StandardIntParameter extends AbstractParameter<Integer> implements IntParameter {
 
     private final int value;
 
-    public DefaultIntParameter(String name, int value) {
+    public StandardIntParameter(String name, int value) {
         super(name);
         this.value = requireNonNull(value);
     }
