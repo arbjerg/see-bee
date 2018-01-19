@@ -9,17 +9,6 @@
         </goals>
     </action>
     <action>
-        <actionName>CUSTOM-Deploy</actionName>
-        <displayName>Deploy</displayName>
-        <goals>
-            <goal>clean</goal>
-            <goal>deploy</goal>
-            <goal>-P</goal>
-            <goal>release</goal>
-            <goal>-Dmaven.test.skip=true</goal>
-        </goals>
-    </action>
-    <action>
         <actionName>CUSTOM-Fast Build</actionName>
         <displayName>Fast Build</displayName>
         <goals>
