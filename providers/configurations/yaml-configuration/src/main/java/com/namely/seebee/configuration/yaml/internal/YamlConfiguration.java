@@ -44,7 +44,10 @@ public final class YamlConfiguration implements Configuration {
     private final Map<String, Object> configMap;
 
     // Config values
-    private final int schemaReloadIntervalSeconds;
+    private final int schemaReloadIntervalMilliSeconds;
+    private final String jdbcHostname;
+    private final Integer jdbcPort;
+    private final String jdbcDatabasename;
     private final String jdbcPassword;
     private final String jdbcUsername;
 
@@ -67,14 +70,32 @@ public final class YamlConfiguration implements Configuration {
             throw new ConfigurationException("Unable to read the file " + fileName + " (" + path.toAbsolutePath() + ")", ioe);
         }
         //
-        this.schemaReloadIntervalSeconds = readInt(SCHEMA_RELOAD_INTERVAL_SECONDS_KEY, defaultConfiguration::schemaReloadIntervalSeconds);
+        this.schemaReloadIntervalMilliSeconds = readInt(SCHEMA_RELOAD_INTERVAL_MILLISECONDS_KEY, defaultConfiguration::schemaReloadIntervalMilliSeconds);
+        this.jdbcHostname = readString(JDBC_HOSTNAME_KEY, defaultConfiguration::jdbcHostName);
+        this.jdbcPort = readInt(JDBC_PORT_KEY, defaultConfiguration::jdbcPort);
+        this.jdbcDatabasename = readString(JDBC_DATABASENAME_KEY, defaultConfiguration::jdbcDatabasename);
         this.jdbcUsername = readString(JDBC_USERNAME_KEY, defaultConfiguration::jdbcUsername);
         this.jdbcPassword = readString(JDBC_PASSWORD_KEY, defaultConfiguration::jdbcPassword);
     }
 
     @Override
-    public int schemaReloadIntervalSeconds() {
-        return schemaReloadIntervalSeconds;
+    public int schemaReloadIntervalMilliSeconds() {
+        return schemaReloadIntervalMilliSeconds;
+    }
+
+    @Override
+    public Optional<String> jdbcHostName() {
+        return Optional.ofNullable(jdbcHostname);
+    }
+
+    @Override
+    public Optional<Integer> jdbcPort() {
+        return Optional.ofNullable(jdbcPort);
+    }
+
+    @Override
+    public Optional<String> jdbcDatabasename() {
+        return Optional.ofNullable(jdbcDatabasename);
     }
 
     @Override
@@ -85,6 +106,24 @@ public final class YamlConfiguration implements Configuration {
     @Override
     public Optional<String> jdbcUsername() {
         return Optional.ofNullable(jdbcUsername);
+    }
+
+    private Integer readInt(String key, Supplier<Optional<Integer>> defaultSupplier) {
+        final Object value = configMap.get(key);
+        if (value == null) {
+            return defaultSupplier.get().orElse(null);
+        } else {
+            if (value instanceof String) {
+                try {
+                    return Integer.parseInt((String) value);
+                } catch (NumberFormatException nfe) {
+                    throw new ConfigurationException("The value for key " + key + " cannot be converted to an integer. Value is  " + value);
+                }
+            } else {
+                throw new ConfigurationException("The value for key " + key + " is of type " + value.getClass() + ". Required type is String, later to be converted to an integer.");
+            }
+
+        }
     }
 
     private int readInt(String key, IntSupplier defaultSupplier) {

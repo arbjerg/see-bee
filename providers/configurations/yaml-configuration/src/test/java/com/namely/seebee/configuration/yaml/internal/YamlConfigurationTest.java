@@ -17,9 +17,6 @@
 package com.namely.seebee.configuration.yaml.internal;
 
 import com.namely.seebee.configuration.Configuration;
-import static com.namely.seebee.configuration.Configuration.JDBC_PASSWORD_KEY;
-import static com.namely.seebee.configuration.Configuration.JDBC_USERNAME_KEY;
-import static com.namely.seebee.configuration.Configuration.SCHEMA_RELOAD_INTERVAL_SECONDS_KEY;
 import com.namely.seebee.repositoryclient.HasComponents;
 import com.namely.seebee.repositoryclient.Parameter;
 import com.namely.seebee.repositoryclient.StringParameter;
@@ -31,6 +28,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static com.namely.seebee.configuration.Configuration.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +40,8 @@ import org.junit.jupiter.api.Test;
 final class YamlConfigurationTest {
 
     private static final int TEST_VALUE_FOR_SCHEMA_RELOADE_INTERVAL_SECONDS = 165;
+    private static final String TEST_VALUE_FOR_JDBC_HOSTNAME = "someHost654";
+    private static final Integer TEST_VALUE_FOR_JDBC_PORT = 42;
     private static final String TEST_VALUE_FOR_JDBC_USERNAME = "someName123";
     private static final String TEST_VALUE_FOR_JDBC_PASSWORD = "somePassword456";
 
@@ -54,10 +55,12 @@ final class YamlConfigurationTest {
         System.out.println("File is " + tmpFile);
 
         final List<String> lines = List.of(
-            "# This is a comment",
-            SCHEMA_RELOAD_INTERVAL_SECONDS_KEY + ": " + TEST_VALUE_FOR_SCHEMA_RELOADE_INTERVAL_SECONDS,
-            JDBC_USERNAME_KEY + ": " + TEST_VALUE_FOR_JDBC_USERNAME,
-            JDBC_PASSWORD_KEY + ": " + TEST_VALUE_FOR_JDBC_PASSWORD
+                "# This is a comment",
+                SCHEMA_RELOAD_INTERVAL_MILLISECONDS_KEY + ": " + TEST_VALUE_FOR_SCHEMA_RELOADE_INTERVAL_SECONDS,
+                JDBC_HOSTNAME_KEY + ": " + TEST_VALUE_FOR_JDBC_HOSTNAME,
+                JDBC_PORT_KEY + ": " + TEST_VALUE_FOR_JDBC_PORT,
+                JDBC_USERNAME_KEY + ": " + TEST_VALUE_FOR_JDBC_USERNAME,
+                JDBC_PASSWORD_KEY + ": " + TEST_VALUE_FOR_JDBC_PASSWORD
         );
 
 //        final Repository repo = Repository.builder()
@@ -65,8 +68,23 @@ final class YamlConfigurationTest {
 //            .build();
         final Configuration someConf = new Configuration() {
             @Override
-            public int schemaReloadIntervalSeconds() {
+            public int schemaReloadIntervalMilliSeconds() {
                 return 42;
+            }
+
+            @Override
+            public Optional<String> jdbcHostName() {
+                return Optional.of("HoHost");
+            }
+
+            @Override
+            public Optional<Integer> jdbcPort() {
+                return Optional.of(17);
+            }
+
+            @Override
+            public Optional<String> jdbcDatabasename() {
+                return Optional.of("db");
             }
 
             @Override
@@ -126,7 +144,9 @@ final class YamlConfigurationTest {
         Files.write(tmpFile, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
         final Configuration configuration = new YamlConfiguration(repo);
 
-        assertEquals(TEST_VALUE_FOR_SCHEMA_RELOADE_INTERVAL_SECONDS, configuration.schemaReloadIntervalSeconds());
+        assertEquals(TEST_VALUE_FOR_SCHEMA_RELOADE_INTERVAL_SECONDS, configuration.schemaReloadIntervalMilliSeconds());
+        assertEquals(Optional.of(TEST_VALUE_FOR_JDBC_HOSTNAME), configuration.jdbcHostName());
+        assertEquals(Optional.of(TEST_VALUE_FOR_JDBC_PORT), configuration.jdbcPort());
         assertEquals(Optional.of(TEST_VALUE_FOR_JDBC_USERNAME), configuration.jdbcUsername());
         assertEquals(Optional.of(TEST_VALUE_FOR_JDBC_PASSWORD), configuration.jdbcPassword());
 

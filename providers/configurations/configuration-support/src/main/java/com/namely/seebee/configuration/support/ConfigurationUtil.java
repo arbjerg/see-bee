@@ -32,7 +32,7 @@ public final class ConfigurationUtil {
         return new StringBuilder()
             .append(c.getClass().getSimpleName())
             .append(" {")
-            .append("schemaReloadIntervalSeconds").append("=").append(c.schemaReloadIntervalSeconds()).append(", ")
+            .append("schemaReloadIntervalMilliSeconds").append("=").append(c.schemaReloadIntervalMilliSeconds()).append(", ")
             .append("jdbcUsername").append("=").append(c.jdbcUsername()).append(", ")
             .append("jdbcPassword").append("=").append(c.jdbcPassword().map(pw -> "********"))
             .append("}")

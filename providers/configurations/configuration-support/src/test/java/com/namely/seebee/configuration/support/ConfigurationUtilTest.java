@@ -32,8 +32,23 @@ final class ConfigurationUtilTest {
     void testScalar() {
         Configuration c = new Configuration() {
             @Override
-            public int schemaReloadIntervalSeconds() {
+            public int schemaReloadIntervalMilliSeconds() {
                 return 40;
+            }
+
+            @Override
+            public Optional<String> jdbcHostName() {
+                return Optional.of("Foo");
+            }
+
+            @Override
+            public Optional<Integer> jdbcPort() {
+                return Optional.of(17);
+            }
+
+            @Override
+            public Optional<String> jdbcDatabasename() {
+                return Optional.empty();
             }
 
             @Override

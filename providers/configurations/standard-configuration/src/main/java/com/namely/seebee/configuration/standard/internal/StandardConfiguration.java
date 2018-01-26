@@ -27,8 +27,23 @@ import java.util.Optional;
 public final class StandardConfiguration  implements Configuration {
 
     @Override
-    public int schemaReloadIntervalSeconds() {
-        return 60;
+    public int schemaReloadIntervalMilliSeconds() {
+        return 60_000;
+    }
+
+    @Override
+    public Optional<String> jdbcHostName() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Integer> jdbcPort() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> jdbcDatabasename() {
+        return Optional.empty();
     }
 
     @Override
