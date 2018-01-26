@@ -19,25 +19,22 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.namely.seebee</groupId>
-    <artifactId>tests</artifactId>
+    <artifactId>crudreactors</artifactId>
     <packaging>pom</packaging>
     
     <parent>
         <groupId>com.namely.seebee</groupId>
-        <artifactId>seebee-parent</artifactId>
+        <artifactId>providers</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
 
-    <name>Tests</name>
+    <name>Dbms Types</name>
     <description>
-        Tests Parent Module
+        CRUD Reactor Parent Module
     </description>
     
     <modules>
-        <module>dockerdb</module>
-        <module>postgres-test</module>
-        <module>sql-server-test</module>
+        <module>sql-server</module>
     </modules>
     
 </project>
