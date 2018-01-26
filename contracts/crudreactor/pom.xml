@@ -19,24 +19,21 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>contracts</artifactId>
-    <packaging>pom</packaging>
-    <name>Contracts</name>
-
+    <artifactId>crudreactor</artifactId>
+    <packaging>jar</packaging>
+    <name>CRUD Observer</name>
     <parent>
         <groupId>com.namely.seebee</groupId>
-        <artifactId>seebee-parent</artifactId>
+        <artifactId>contracts</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
-    
-    <modules>
-        <module>configuration</module>
-        <module>dbmstype</module>
-        <module>repositoryclient</module>
-        <module>repository</module>
-        <module>softwareinfo</module>
-        <module>typemapper</module>
-        <module>crudreactor</module>
-    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.namely.seebee</groupId>
+            <artifactId>typemapper</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>
