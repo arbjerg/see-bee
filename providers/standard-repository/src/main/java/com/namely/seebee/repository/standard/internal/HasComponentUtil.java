@@ -55,7 +55,7 @@ final class HasComponentUtil {
     static <T> T getOrThrow(Map<Class<?>, List<Object>> map, Class<T> type) {
         requireNonNull(type);
         return get(map, type)
-            .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(() -> new NoSuchElementException("Missing component: " + type));
     }
 
     static <T extends Parameter<?>> Optional<T> getParameter(Map<Class<?>, List<Object>> map, Class<T> parameterType, String name) {

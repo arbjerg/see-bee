@@ -19,9 +19,12 @@ package com.namely.seebee.repository.standard.internal;
 import com.namely.seebee.repository.Repository;
 import com.namely.seebee.repositoryclient.Parameter;
 import java.lang.System.Logger;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
+
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -74,17 +77,20 @@ final class StandardRepository implements Repository {
     @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
-            componentList.stream()
-                .filter(AutoCloseable.class::isInstance)
-                .map(AutoCloseable.class::cast)
-                .forEachOrdered(ac -> {
-                    try {
-                        LOGGER.log(Logger.Level.INFO, "Closing " + ac.getClass().getName());
-                        ac.close();
-                    } catch (Exception e) {
-                        LOGGER.log(Logger.Level.ERROR, "Error while closing " + ac.getClass().getName(), e);
-                    }
-                });
+            List<AutoCloseable> closeableComponents = componentList.stream()
+                    .filter(AutoCloseable.class::isInstance)
+                    .map(AutoCloseable.class::cast)
+                    .collect(toList());
+            Collections.reverse(closeableComponents);
+            closeableComponents
+                    .forEach(ac -> {
+                        try {
+                            LOGGER.log(Logger.Level.INFO, "Closing " + ac.getClass().getName());
+                            ac.close();
+                        } catch (Exception e) {
+                            LOGGER.log(Logger.Level.ERROR, "Error while closing " + ac.getClass().getName(), e);
+                        }
+                    });
             componentList.clear();
             componentMap.clear();
             LOGGER.log(Logger.Level.INFO, Repository.class.getSimpleName() + " was closed");
