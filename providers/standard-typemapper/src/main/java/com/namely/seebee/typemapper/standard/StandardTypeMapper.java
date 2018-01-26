@@ -21,6 +21,10 @@ import com.namely.seebee.typemapper.ColumnValueFactory;
 import com.namely.seebee.typemapper.TypeMapper;
 import com.namely.seebee.typemapper.TypeMapperException;
 import com.namely.seebee.typemapper.standard.internal.factory.IntColumnValueFactory;
+import com.namely.seebee.typemapper.standard.internal.factory.VarcharColumnValueFactory;
+
+import java.sql.Types;
+import java.text.MessageFormat;
 
 /**
  *
@@ -30,10 +34,16 @@ public class StandardTypeMapper implements TypeMapper {
 
     @Override
     public ColumnValueFactory<?> createFactory(ColumnMetaData columnMetaData) {
-        if ("int".equals(columnMetaData.getTypeName())) {
-            return new IntColumnValueFactory(columnMetaData);
+        switch (columnMetaData.getDataType()) {
+            case Types.INTEGER:
+                return new IntColumnValueFactory(columnMetaData);
+            case Types.VARCHAR:
+            case Types.NVARCHAR:
+                return new VarcharColumnValueFactory(columnMetaData);
         }
-        throw new TypeMapperException("column meta data cannot be mapped to a factory: " + columnMetaData);
+        throw new TypeMapperException(MessageFormat.format("column meta data cannot be mapped to a factory: {0} {1}",
+                columnMetaData.getTypeName(),
+                columnMetaData.getDataType()));
     }
 
     @Override

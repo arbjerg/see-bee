@@ -28,6 +28,13 @@ import java.util.function.Supplier;
 public interface ColumnValue<E> extends Supplier<E>, HasJavaType<E> {
 
     /**
+     * Returns the name of the column
+     *
+     * @return the column name
+     */
+    String name();
+
+    /**
      * Returns the container value.
      *
      * @return the container value

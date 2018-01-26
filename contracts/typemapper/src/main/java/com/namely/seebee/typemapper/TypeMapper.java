@@ -26,7 +26,7 @@ package com.namely.seebee.typemapper;
 public interface TypeMapper {
 
     /**
-     * Creates and returns a new a new {@link ColumnValueFactory } that can be
+     * Creates and returns a new {@link ColumnValueFactory } that can be
      * used to create {@link ColumnValue } objects for the provided {@code columnMetaData
      * }.
      *

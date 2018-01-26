@@ -26,11 +26,13 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Per Minborg
  */
-public class StringColumnValue implements ColumnValue<String> {
+public class StringColumnValue extends AbstractNamedColumnValue implements ColumnValue<String> {
 
     private final String value;
 
     public StringColumnValue(ResultSet resultSet, String columnName) {
+        super(columnName);
+
         requireNonNull(resultSet);
         requireNonNull(columnName);
         try {
