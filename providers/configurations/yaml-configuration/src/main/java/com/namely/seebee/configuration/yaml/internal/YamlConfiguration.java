@@ -45,6 +45,7 @@ public final class YamlConfiguration implements Configuration {
 
     // Config values
     private final int schemaReloadIntervalMilliSeconds;
+    private final int changesPollIntervalMilliSeconds;
     private final String jdbcHostname;
     private final Integer jdbcPort;
     private final String jdbcDatabasename;
@@ -71,11 +72,17 @@ public final class YamlConfiguration implements Configuration {
         }
         //
         this.schemaReloadIntervalMilliSeconds = readInt(SCHEMA_RELOAD_INTERVAL_MILLISECONDS_KEY, defaultConfiguration::schemaReloadIntervalMilliSeconds);
+        this.changesPollIntervalMilliSeconds = readInt(CHANGES_POLL_INTERVAL_MILLISECONDS_KEY, defaultConfiguration::changesPollIntervalMilliSeconds);
         this.jdbcHostname = readString(JDBC_HOSTNAME_KEY, defaultConfiguration::jdbcHostName);
         this.jdbcPort = readInt(JDBC_PORT_KEY, defaultConfiguration::jdbcPort);
         this.jdbcDatabasename = readString(JDBC_DATABASENAME_KEY, defaultConfiguration::jdbcDatabasename);
         this.jdbcUsername = readString(JDBC_USERNAME_KEY, defaultConfiguration::jdbcUsername);
         this.jdbcPassword = readString(JDBC_PASSWORD_KEY, defaultConfiguration::jdbcPassword);
+    }
+
+    @Override
+    public int changesPollIntervalMilliSeconds() {
+        return changesPollIntervalMilliSeconds;
     }
 
     @Override

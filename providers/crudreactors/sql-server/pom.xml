@@ -19,28 +19,36 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.namely.seebee</groupId>
-    <artifactId>providers</artifactId>
-    <packaging>pom</packaging>
-    
+    <artifactId>sqlserver-crudreactor</artifactId>
+    <packaging>jar</packaging>
+    <name>SQL Server CRUD Reactor</name>
+
     <parent>
         <groupId>com.namely.seebee</groupId>
-        <artifactId>seebee-parent</artifactId>
+        <artifactId>crudreactors</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
-
-    <name>Providers</name>
-    <description>
-        Providers of implementations
-    </description>
     
-    <modules>
-        <module>configurations</module>
-        <module>dbmstypes</module>
-        <module>standard-repository</module>
-        <module>standard-softwareinfo</module>
-        <module>standard-typemapper</module>
-        <module>crudreactors</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>com.namely.seebee</groupId>
+            <artifactId>crudreactor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.namely.seebee</groupId>
+            <artifactId>configuration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.namely.seebee</groupId>
+            <artifactId>repositoryclient</artifactId>
+            <version>${project.version}</version>
+        </dependency>        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>6.1.0.jre8</version>
+        </dependency>
+    </dependencies>
     
 </project>

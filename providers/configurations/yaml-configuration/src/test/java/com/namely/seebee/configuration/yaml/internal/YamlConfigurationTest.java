@@ -68,6 +68,11 @@ final class YamlConfigurationTest {
 //            .build();
         final Configuration someConf = new Configuration() {
             @Override
+            public int changesPollIntervalMilliSeconds() {
+                return 4;
+            }
+
+            @Override
             public int schemaReloadIntervalMilliSeconds() {
                 return 42;
             }

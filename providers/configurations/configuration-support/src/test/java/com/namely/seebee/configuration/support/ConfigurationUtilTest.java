@@ -32,6 +32,11 @@ final class ConfigurationUtilTest {
     void testScalar() {
         Configuration c = new Configuration() {
             @Override
+            public int changesPollIntervalMilliSeconds() {
+                return 0;
+            }
+
+            @Override
             public int schemaReloadIntervalMilliSeconds() {
                 return 40;
             }

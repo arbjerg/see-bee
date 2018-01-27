@@ -17,6 +17,11 @@ public enum CrudReactorState {
     CONFIGURING,
 
     /**
+     * The reactor configuration is illegal. Will not retry.
+     */
+    ILLEGAL_CONFIG,
+
+    /**
      * The reactor has failed to configure and will retry
      */
     FAILED,

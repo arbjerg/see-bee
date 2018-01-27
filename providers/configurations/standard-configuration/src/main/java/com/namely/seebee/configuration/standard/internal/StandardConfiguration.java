@@ -27,6 +27,11 @@ import java.util.Optional;
 public final class StandardConfiguration  implements Configuration {
 
     @Override
+    public int changesPollIntervalMilliSeconds() {
+        return 1_000;
+    }
+
+    @Override
     public int schemaReloadIntervalMilliSeconds() {
         return 60_000;
     }

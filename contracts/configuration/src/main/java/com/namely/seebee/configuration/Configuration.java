@@ -25,10 +25,12 @@ import java.util.Optional;
  * XML, JSON or YAML file.
  *
  * @author Per Minborg
+ * @author Dan Lawesson
  */
 public interface Configuration {
 
     String SCHEMA_RELOAD_INTERVAL_MILLISECONDS_KEY ="schema.reload.interval.milliseconds";
+    String CHANGES_POLL_INTERVAL_MILLISECONDS_KEY ="changes.poll.interval.milliseconds";
     String JDBC_HOSTNAME_KEY ="jdbc.hostname";
     String JDBC_PORT_KEY ="jdbc.port";
     String JDBC_DATABASENAME_KEY ="jdbc.databasename";
@@ -41,6 +43,14 @@ public interface Configuration {
      * Returns the time between database update polling
      *
      * @return database update polling interval
+     */
+    int changesPollIntervalMilliSeconds();
+
+
+    /**
+     * Returns the time between automatic schema reloading
+     *
+     * @return the time between automatic schema reloading
      */
     int schemaReloadIntervalMilliSeconds();
 
