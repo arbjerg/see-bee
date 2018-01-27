@@ -1,0 +1,41 @@
+--
+--
+-- Copyright (c) 2006-2017, Speedment, Inc. All Rights Reserved.
+--
+
+
+CREATE DATABASE speedment collate sql_latin1_general_cp1_cs_as;
+
+ALTER DATABASE speedment
+SET CHANGE_TRACKING = ON
+(CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON)
+
+go
+
+USE speedment;
+
+
+CREATE TABLE USERS(
+    id INTEGER IDENTITY NOT NULL,
+    name varchar(32) UNIQUE NOT NULL,
+    age INTEGER NOT NULL,
+    CONSTRAINT pk_user PRIMARY KEY (id)
+);
+
+ALTER TABLE USERS
+ENABLE CHANGE_TRACKING
+WITH (TRACK_COLUMNS_UPDATED = ON)
+
+CREATE TABLE SWITCHES(
+    id INTEGER NOT NULL,
+    name varchar(32) UNIQUE NOT NULL,
+    state INTEGER NOT NULL,
+    CONSTRAINT pk_switches PRIMARY KEY (id)
+);
+
+ALTER TABLE SWITCHES
+ENABLE CHANGE_TRACKING
+WITH (TRACK_COLUMNS_UPDATED = ON)
+
+
+go

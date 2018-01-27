@@ -15,5 +15,6 @@
  * the License.
  */
 module com.namely.seebee.dbms.sqlserver.test {
-    // No export
+    requires com.namely.seebee.dockerdb;
+    requires java.sql;
 }
