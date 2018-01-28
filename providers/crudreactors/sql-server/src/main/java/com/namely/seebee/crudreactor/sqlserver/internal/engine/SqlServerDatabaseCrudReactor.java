@@ -90,7 +90,9 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor {
     }
 
     private void reloadTrackedTables() throws SQLException {
-        tables = new TrackedTableSet(typeMapper, configurationState);
+        if (state == RUNNING) {  // There may be a race with shutdown
+            tables = new TrackedTableSet(typeMapper, configurationState);
+        }
     }
 
     private void setState(CrudReactorState newState) {
