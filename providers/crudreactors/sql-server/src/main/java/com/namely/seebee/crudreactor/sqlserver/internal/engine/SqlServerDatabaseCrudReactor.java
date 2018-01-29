@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static com.namely.seebee.crudreactor.CrudReactorState.*;
+import static java.util.logging.Level.FINER;
+import static java.util.logging.Level.SEVERE;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
@@ -72,7 +74,7 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor {
             pollTask = scheduler.scheduleAtFixedRate(this::poll, 0, pollInterval, TimeUnit.MILLISECONDS);
             setState(RUNNING);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to initialize", e);
+            LOGGER.log(SEVERE, "Failed to initialize", e);
             configureTask = scheduler.schedule(this::start, FAILURE_DELAY_S, TimeUnit.SECONDS);
         } finally {
             if (pollTask == null) {
@@ -82,21 +84,25 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor {
     }
 
     private void tryReloadTrackedTables() {
-        try {
-            reloadTrackedTables();
-        } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "Failed to reload metadata", e);
+        if (state == RUNNING) {  // There may be a race with shutdown
+            try {
+                reloadTrackedTables();
+            } catch (SQLException e) {
+                if (state == RUNNING) {  // There may be a race with shutdown
+                    LOGGER.log(Level.WARNING, "Failed to reload metadata", e);
+                } else {
+                    LOGGER.log(FINER, "Failed to reload (but not running, so do not worry)", e);
+                }
+            }
         }
     }
 
     private void reloadTrackedTables() throws SQLException {
-        if (state == RUNNING) {  // There may be a race with shutdown
-            tables = new TrackedTableSet(typeMapper, configurationState);
-        }
+        tables = new TrackedTableSet(typeMapper, configurationState);
     }
 
     private void setState(CrudReactorState newState) {
-        LOGGER.log(Level.FINER, ()-> MessageFormat.format("State change {0} -> {1}", state, newState));
+        LOGGER.log(FINER, ()-> MessageFormat.format("State change {0} -> {1}", state, newState));
         state = newState;
     }
 
@@ -120,7 +126,11 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor {
                     listenerEntry.getListener().newEvents(eventSet);
                     listenerEntry.setVersion(eventSet.endVersion());
                 } catch (SQLException e) {
-                    LOGGER.log(Level.SEVERE, "unable to find changes for " + lastVersion, e);
+                    if (state == RUNNING) {
+                        LOGGER.log(SEVERE, "unable to find changes for " + lastVersion, e);
+                    } else {
+                        LOGGER.log(FINER, "error finding changes (but not running)", e);
+                    }
                 }
             }
         }
