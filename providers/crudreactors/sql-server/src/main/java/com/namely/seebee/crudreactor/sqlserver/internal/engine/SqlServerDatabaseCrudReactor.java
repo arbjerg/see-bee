@@ -45,7 +45,10 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public SqlServerDatabaseCrudReactor(HasComponents repo) {
+        pollTask = null;
+        reloadTask = null;
         state = CREATED;
+
         Configuration configuration = repo.getOrThrow(Configuration.class);
         typeMapper = repo.getOrThrow(TypeMapper.class);
         listeners = Collections.emptyList();
@@ -112,6 +115,9 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor {
         Stream.of(configureTask, pollTask, reloadTask)
                 .filter(Objects::nonNull)
                 .forEach(task -> task.cancel(true));
+        configureTask = null;
+        pollTask = null;
+        reloadTask = null;
     }
 
     private void poll() {
