@@ -48,8 +48,9 @@ final class TestBasicCrud {
                 .build();
     }
 
-    private class EventSink implements CrudEventListener {
+    private class EventSink implements CrudEventListener, AutoCloseable {
         private final List<RowEvent> allEvents = new ArrayList<>();
+        private volatile SQLException exceptionBeforeClose;
 
         @Override
         public Optional<String> startVersion() {
@@ -62,7 +63,7 @@ final class TestBasicCrud {
                 try {
                     events.stream().forEach(allEvents::add);
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    exceptionBeforeClose = e;
                 }
             }
         }
@@ -70,13 +71,20 @@ final class TestBasicCrud {
         List<RowEvent> events() {
             return allEvents;
         }
+
+        @Override
+        public void close() throws SQLException {
+            if (exceptionBeforeClose != null) {
+                throw exceptionBeforeClose;
+            }
+        }
     }
 
     @Test
     void testTrackInserts() throws Exception {
-        EventSink sink = new EventSink();
 
         try (TestDatabase db = TestDatabase.createDockerDatabase("sqlserver");
+             EventSink sink = new EventSink();
              Repository repository = buildRepository(db, sink);
              SqlServerCrudReactor reactor = repository.getOrThrow(SqlServerCrudReactor.class)) {
 
@@ -134,9 +142,8 @@ final class TestBasicCrud {
 
     @Test
     void testTrackUpdates() throws Exception {
-        EventSink sink = new EventSink();
-
         try (TestDatabase db = TestDatabase.createDockerDatabase("sqlserver");
+             EventSink sink = new EventSink();
              Repository repository = buildRepository(db, sink);
              SqlServerCrudReactor reactor = repository.getOrThrow(SqlServerCrudReactor.class)) {
 
@@ -218,9 +225,8 @@ final class TestBasicCrud {
 
     @Test
     void testTrackDeletes() throws Exception {
-        EventSink sink = new EventSink();
-
         try (TestDatabase db = TestDatabase.createDockerDatabase("sqlserver");
+             EventSink sink = new EventSink();
              Repository repository = buildRepository(db, sink);
              SqlServerCrudReactor reactor = repository.getOrThrow(SqlServerCrudReactor.class)) {
 
