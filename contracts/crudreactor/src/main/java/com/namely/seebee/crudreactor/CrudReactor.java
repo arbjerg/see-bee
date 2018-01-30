@@ -16,6 +16,8 @@
  */
 package com.namely.seebee.crudreactor;
 
+import java.sql.SQLException;
+
 /**
  * A CrudReactor is the engine that tracks changes of a database
  *
@@ -28,4 +30,21 @@ public interface CrudReactor extends AutoCloseable {
      * @return the current state of the reactor
      */
     CrudReactorState state();
+
+    /**
+     * Throwing anything that is assignable form InterruptedException gives a compiler waning
+     * in user code along the lines of
+     *
+     * <p><code>auto-closeable resource CrudReactor has a member method close() that
+     * could throw InterruptedException</code></p>
+     *
+     * Therefore, we restrict the throws clause to something that cannot possibly turn
+     * out to be an InterruptedException.
+     *
+     * @see AutoCloseable#close
+     *
+     * @throws SQLException
+     */
+    @Override
+    void close() throws SQLException;
 }
