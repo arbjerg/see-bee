@@ -16,9 +16,9 @@
  */
 module com.namely.seebee.crudreactor.sqlserver {
     requires transitive com.namely.seebee.crudreactor;
+    requires transitive com.namely.seebee.repositoryclient;
     requires com.namely.seebee.configuration;
     requires com.namely.seebee.typemapper;
-    requires com.namely.seebee.repositoryclient;
     requires java.sql;
 
     exports com.namely.seebee.crudreactor.sqlserver;

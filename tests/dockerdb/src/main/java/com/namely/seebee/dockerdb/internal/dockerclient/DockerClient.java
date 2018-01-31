@@ -102,7 +102,7 @@ public class DockerClient implements AutoCloseable {
             ports.put("" + port + "/tcp", new JSONObject());
             body.put("ExposedPorts", ports);
 
-            List<Map> hostPortList = new ArrayList<>();
+            List<Map<String, String>> hostPortList = new ArrayList<>();
             Map<String, String> hostPortMap = new HashMap<>();
             hostPortMap.put("HostPort", "" + port);
             hostPortList.add(hostPortMap);

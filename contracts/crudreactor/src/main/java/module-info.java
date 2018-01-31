@@ -16,5 +16,6 @@
  */
 module com.namely.seebee.crudreactor {
     exports com.namely.seebee.crudreactor;
-    requires com.namely.seebee.typemapper;
+    requires transitive java.sql;
+    requires transitive com.namely.seebee.typemapper;
 }
