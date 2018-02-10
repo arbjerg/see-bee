@@ -44,7 +44,8 @@
             <groupId>com.namely.seebee</groupId>
             <artifactId>repositoryclient</artifactId>
             <version>${project.version}</version>
-        </dependency>        <dependency>
+        </dependency>
+        <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
             <version>6.1.0.jre8</version>

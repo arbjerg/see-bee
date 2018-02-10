@@ -1,15 +1,14 @@
 package com.namely.seebee.crudreactor.sqlserver.internal.data.event;
 
 import com.namely.seebee.crudreactor.CrudEventType;
+import com.namely.seebee.crudreactor.RowData;
 import com.namely.seebee.crudreactor.RowEvent;
-import com.namely.seebee.crudreactor.RowValue;
-import com.namely.seebee.typemapper.ColumnValue;
 
 public final class RowEventAdd implements RowEvent {
-    private final RowValue values;
+    private final RowData data;
 
-    public RowEventAdd(RowValue values) {
-        this.values = values;
+    public RowEventAdd(RowData data) {
+        this.data = data;
     }
 
     @Override
@@ -18,12 +17,12 @@ public final class RowEventAdd implements RowEvent {
     }
 
     @Override
-    public RowValue values() {
-        return values;
+    public RowData data() {
+        return data;
     }
 
     @Override
     public String toString() {
-        return "Add " + values.toString();
+        return "Add " + data.toString();
     }
 }

@@ -1,6 +1,5 @@
 package com.namely.seebee.crudreactor;
 
-import java.sql.SQLException;
 import java.util.stream.Stream;
 
 /**
@@ -18,11 +17,12 @@ public interface CrudEvents {
      */
     String endVersion();
 
+    String startVersion();
+
     /**
      * Stream over the events of this database data change
      *
-     * @return a stream of database data changes
-     * @throws SQLException if access to the database failed
+     * @return a tableEvents of suppliers of database data changes streams, one ofr each table
      */
-    Stream<RowEvent> stream() throws SQLException;
+    Stream<TableCrudEvents> tableEvents();
 }

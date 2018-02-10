@@ -1,6 +1,6 @@
 package com.namely.seebee.crudreactor.sqlserver.internal.engine;
 
-import com.namely.seebee.configuration.Configuration;
+import com.namely.seebee.crudreactor.sqlserver.internal.Configuration;
 
 import java.sql.*;
 import java.util.NoSuchElementException;
@@ -40,6 +40,10 @@ public class ConfigurationState {
 
     public int getPollIntervalMs() {
         return pollIntervalMs;
+    }
+
+    String connectionUrl() {
+        return connectionUrl;
     }
 
     Connection createConnection() throws SQLException {

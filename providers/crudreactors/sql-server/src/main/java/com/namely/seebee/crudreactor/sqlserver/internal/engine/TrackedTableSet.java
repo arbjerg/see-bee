@@ -48,9 +48,9 @@ public class TrackedTableSet {
                 String tableName = rs.getString("tableName");
                 String pkName = rs.getString("pkName");
 
-                buildersBySchemaAndTable.computeIfAbsent(schemaName,
-                        $ -> new HashMap<>()).computeIfAbsent(tableName,
-                        $ -> TrackedTable.builder(schemaName, tableName)).withPk(pkName);
+                buildersBySchemaAndTable.computeIfAbsent(schemaName, $ -> new HashMap<>())
+                        .computeIfAbsent(tableName, $ -> TrackedTable.builder(schemaName, tableName))
+                        .withPk(pkName);
             }
             return buildersBySchemaAndTable.values().stream()
                     .flatMap(m -> m.values().stream())
@@ -72,7 +72,7 @@ public class TrackedTableSet {
                     SqlServerColumnMetadata metaData = new SqlServerColumnMetadata(
                             schemaName, tableName, columnName, columns
                     );
-                    builder.withColumnValueFactory(columnName, typeMapper.createFactory(metaData));
+                    builder.withColumn(columnName, typeMapper.createFactory(metaData), metaData.isNullableNull());
                 }
             }
         }

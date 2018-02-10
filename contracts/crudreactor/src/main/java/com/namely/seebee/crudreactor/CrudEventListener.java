@@ -1,11 +1,12 @@
 package com.namely.seebee.crudreactor;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 /**
  * A listener that will receive the database changes tracked by a CrudReactor
  */
-public interface CrudEventListener {
+public interface CrudEventListener extends AutoCloseable {
     /**
      * Returns a String representation of the most recently consumed data version. Database changes
      * will be tracked from this version (exclusive). If not present,
@@ -26,4 +27,9 @@ public interface CrudEventListener {
      * @param events a representation of recent database changes
      */
     void newEvents(CrudEvents events);
+
+    boolean join(long timeoutMs) throws InterruptedException;
+
+    @Override
+    void close() throws SQLException;
 }

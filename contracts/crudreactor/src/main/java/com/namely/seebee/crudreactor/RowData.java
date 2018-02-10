@@ -1,18 +1,15 @@
 package com.namely.seebee.crudreactor;
 
+import com.namely.seebee.typemapper.ColumnValue;
+
+import java.util.List;
+
 /**
- * A RowEvent represents a tracked database change to a single row of a table of the database
+ * A representation of the values of a row of a database
  *
  * @author Dan Lawesson
  */
-public interface RowEvent {
-    /**
-     * Returns the type of the change
-     *
-     * @return the type of the change
-     */
-    CrudEventType type();
-
+public interface RowData {
     /**
      * Returns the columns of this row. A List is used since a row will always be materialized as a whole
      * from the reactor point of view and from the consumer point of view, it makes sense to be able to address
@@ -20,5 +17,5 @@ public interface RowEvent {
      *
      * @return the columns of this row
      */
-    RowData data();
+    List<ColumnValue<?>> columns();
 }

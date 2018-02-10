@@ -1,33 +1,32 @@
 package com.namely.seebee.crudreactor.sqlserver.internal.data;
 
+import com.namely.seebee.crudreactor.HasColumnMetadata;
+import com.namely.seebee.crudreactor.HasTableMetadata;
 import com.namely.seebee.typemapper.ColumnValueFactory;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.joining;
 
-public class TrackedTable {
+public class TrackedTable implements HasTableMetadata {
     private final String schemaName;
     private final String tableName;
-    private final Map<String, ColumnValueFactory> columnValueFactories;
+    private final List<TrackedColumn> columns;
     private final Collection<String> pkNames;
     private final String pkNamesCSV;
 
     public static class Builder {
-
         private final String schemaName;
         private final String tableName;
-        private final Map<String, ColumnValueFactory> columnValueFactories;
+        private final List<TrackedColumn> columns;
         private final Collection<String> pkNames;
+
         private Builder(String schemaName, String tableName) {
             this.schemaName = schemaName;
             this.tableName = tableName;
-            columnValueFactories = new HashMap<>();
-            pkNames = new ArrayList<>();
+            columns = new ArrayList<>();
+            pkNames = new HashSet<>();
         }
 
         public Builder withPk(String pk) {
@@ -35,13 +34,14 @@ public class TrackedTable {
             return this;
         }
 
-        public Builder withColumnValueFactory(String columnName, ColumnValueFactory factory) {
-            columnValueFactories.put(columnName, factory);
+        public Builder withColumn(String columnName, ColumnValueFactory<?> factory, boolean nullable) {
+            boolean pk = pkNames.contains(columnName);
+            columns.add(new TrackedColumn(columnName, factory, nullable, pk));
             return this;
         }
 
         public TrackedTable build() {
-            return new TrackedTable(schemaName, tableName, pkNames, columnValueFactories);
+            return new TrackedTable(schemaName, tableName, pkNames, columns);
         }
 
         public String schemaName() {
@@ -53,16 +53,17 @@ public class TrackedTable {
         }
 
     }
+
     public static Builder builder(String schemaName, String tableName) {
         return new Builder(schemaName, tableName);
     }
 
-    private TrackedTable(String schemaName, String name, Collection<String> pkNames, Map<String, ColumnValueFactory> columnValueFactories) {
+    private TrackedTable(String schemaName, String name, Collection<String> pkNames, List<TrackedColumn> columns) {
         this.schemaName = schemaName;
         this.tableName = name;
         this.pkNames = pkNames;
         this.pkNamesCSV = pkNames.stream().collect(joining(", "));
-        this.columnValueFactories = columnValueFactories;
+        this.columns = columns;
     }
 
     public String getQualifiedName() {
@@ -73,16 +74,22 @@ public class TrackedTable {
         return schemaName;
     }
 
+    @Override
     public String tableName() {
         return tableName;
+    }
+
+    @Override
+    public List<? extends HasColumnMetadata> columnMetadatas() {
+        return columns;
     }
 
     public Collection<String> pkNames() {
         return pkNames;
     }
 
-    public Collection<String> columnNames() {
-        return columnValueFactories.keySet();
+    public Collection<TrackedColumn> columns() {
+        return columns;
     }
 
     public String pkNamesCSV() {
@@ -91,13 +98,5 @@ public class TrackedTable {
 
     public String toString() {
         return MessageFormat.format("{0}({1})", getQualifiedName(), pkNamesCSV);
-    }
-
-    public void setColumnValueFactory(String columnName, ColumnValueFactory<?> factory) {
-        columnValueFactories.put(columnName, factory);
-    }
-
-    public ColumnValueFactory columnValueFactory(String columnName) {
-        return columnValueFactories.get(columnName);
     }
 }

@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 public class SqlServerNumberedVersion {
     public static final SqlServerNumberedVersion ZERO = new SqlServerNumberedVersion(0);
-    private static final String PREFIX = "SqlServer Data v";
+    private static final String PREFIX = "v";
 
     private final long versionNumber;
 
@@ -14,13 +14,13 @@ public class SqlServerNumberedVersion {
 
     static SqlServerNumberedVersion fromString(String s) {
         if (s.startsWith(PREFIX)) {
-            return new SqlServerNumberedVersion(Long.parseLong(s.substring(PREFIX.length())));
+            return new SqlServerNumberedVersion(Long.parseLong(s.substring(PREFIX.length()), 16));
         }
         throw new IllegalArgumentException("Unknown version: " + s);
     }
 
     public String dumpToString() {
-        return PREFIX + Long.toString(versionNumber);
+        return PREFIX + Long.toString(versionNumber, 16);
     }
 
     public long getVersionNumber() {
