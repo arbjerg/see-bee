@@ -22,13 +22,15 @@ public class DockerTestDatabase implements TestDatabase {
     private static final Logger LOGGER = Logger.getLogger(DockerTestDatabase.class.getName());
     private static final long MAX_TIME_TO_WAIT_FOR_CONNECTION = 60_000;
 
-    private final List<DockerContainer> createdContainers = new ArrayList<>();
-    private final String resourceDirectory;
+    private DockerContainer container = null;
     private final DockerSourceArchive dockerSource;
     private final int port;
+    private final String name;
+    private final List<String> binds = new ArrayList<>();
+    private final List<String> links = new ArrayList<>();
 
     public DockerTestDatabase(String resourceDirectory) throws DockerException {
-        this.resourceDirectory = resourceDirectory;
+        name = "db-" + resourceDirectory;
         dockerSource = new DockerSourceArchive(resourceDirectory);
         try {
             port = Integer.parseInt(dockerSource.getLabels().get("dockerdb.port"));
@@ -37,15 +39,28 @@ public class DockerTestDatabase implements TestDatabase {
         }
     }
 
-    public void start() throws DockerException {
+    @Override
+    public TestDatabase mount(String hostPath, String containerMountPoint) {
+        binds.add(hostPath + ":" + containerMountPoint);
+        return this;
+    }
+
+    @Override
+    public TestDatabase link(TestDatabase other, String name) throws DockerException {
+        links.add(other.getName() + ":" + name);
+        return this;
+    }
+
+    public TestDatabase start() throws DockerException {
+        if (container != null) {
+            throw new DockerException("already started");
+        }
         try (DockerClient client = new DockerClient()) {
             final byte[] archive = dockerSource.getArchive();
-            String name = "db-" + resourceDirectory;
             DockerImage image = client.buildImage(archive, name);
             LOGGER.log(FINER, "Created image " + image);
-            DockerContainer container;
             try {
-                container = client.create(image, name, port);
+                container = client.create(image, name, port, binds, links);
             } catch (DockerException e) {
                 try {
                     client.killContainer(name);
@@ -57,10 +72,9 @@ public class DockerTestDatabase implements TestDatabase {
                 } catch (DockerException e2) {
                     LOGGER.log(FINER, "Failed to remove conflicting container " + name);
                 }
-                container = client.create(image, name, port);
+                container = client.create(image, name, port, binds, links);
             }
             LOGGER.log(FINER, "Created container " + container);
-            createdContainers.add(container);
             client.start(container);
             waitForPort(getHostName());
             LOGGER.log(FINER, "Port " + port + " bound");
@@ -71,8 +85,25 @@ public class DockerTestDatabase implements TestDatabase {
             LOGGER.log(WARNING, e.getMessage());
             throw new DockerException("Failed to start docker database", e);
         }
-
+        return this;
     }
+
+    @Override
+    public String execToString(String... command) throws DockerException {
+        if (container == null) {
+            throw new DockerException("no running container");
+        }
+        try (DockerClient client = new DockerClient()) {
+            return client.exec(container, command);
+        } catch (DockerException e) {
+            LOGGER.log(WARNING, e.getMessage());
+            throw e;
+        } catch (IOException e) {
+            LOGGER.log(WARNING, e.getMessage());
+            throw new DockerException("Failed to exec", e);
+        }
+    }
+
 
     private void waitForPort(String dockerHostName) throws InterruptedException {
         long deadLine = System.currentTimeMillis() + MAX_TIME_TO_WAIT_FOR_CONNECTION;
@@ -97,22 +128,22 @@ public class DockerTestDatabase implements TestDatabase {
 
     @Override
     public void close() throws IOException {
-        try (DockerClient client = new DockerClient()) {
-            for (DockerContainer container : createdContainers) {
+        if (container != null) {
+            try (DockerClient client = new DockerClient()) {
                 try {
                     try {
                         client.kill(container);
                     } catch (DockerException e) {
-                        LOGGER.log(FINER, "Failed to kill container " + container, e);
+                        LOGGER.log(FINER, e, () -> "Failed to kill container " + container);
                     }
                     client.remove(container);
                     LOGGER.log(FINER, "Removed container " + container);
+                    container = null;
                 } catch (DockerException e) {
                     LOGGER.log(WARNING, "Failed to cleanup container", e);
                 }
             }
         }
-        createdContainers.clear();
     }
 
     @Override
@@ -131,6 +162,11 @@ public class DockerTestDatabase implements TestDatabase {
     @Override
     public int getPort() {
         return port;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
 }

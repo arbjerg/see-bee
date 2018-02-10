@@ -12,17 +12,46 @@ import java.io.IOException;
 public interface TestDatabase extends AutoCloseable {
 
     /**
-     * Create and start a database
+     * Create a database
      *
      * @param resourceDirectory the resource directory where the Dockerfile and dependent files resides
      * @return the test database reference which allows closing and finding the host IP and port
      * @throws DockerException if failing
      */
-    static TestDatabase createDockerDatabase(String resourceDirectory) throws DockerException {
-        DockerTestDatabase database = new DockerTestDatabase(resourceDirectory);
-        database.start();
-        return database;
+    static TestDatabase create(String resourceDirectory) throws DockerException {
+        return new DockerTestDatabase(resourceDirectory);
     }
+
+    /**
+     * Mount a host directory on a mount point in the container. Must be called before starting.
+     *
+     * @see #start()
+     * @param hostPath host file system directory
+     * @param containerMountPoint container volume to use as mount point
+     * @throws DockerException if failing to mount
+     */
+    TestDatabase mount(String hostPath, String containerMountPoint) throws DockerException;
+
+    /**
+     * Link networking of this database so that the other database is reachable from this container.
+     * Must be called before starting.
+     *
+     * @see #start()
+     * @param other the container that shall be reached
+     * @param name the name under which the current container will reach the other container
+     * @throws DockerException if failing to mount
+     */
+    TestDatabase link(TestDatabase other, String name) throws DockerException;
+
+    /**
+     * Start the database
+     *
+     * @throws DockerException if failing
+     */
+    TestDatabase start() throws DockerException;
+
+
+    String execToString(String... command) throws DockerException;
 
     /**
      * Shut down the database and release all resources
@@ -45,4 +74,11 @@ public interface TestDatabase extends AutoCloseable {
      * @return the port where the database is running
      */
     int getPort();
+
+    /**
+     * Returns the name of the database
+     *
+     * @return the name of the database
+     */
+    String getName();
 }

@@ -5,7 +5,6 @@ import com.namely.seebee.dockerdb.DockerException;
 import com.namely.seebee.dockerdb.internal.dockerclient.unixdomainsocket.ConnectionManager;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
@@ -19,9 +18,11 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static java.lang.System.Logger.Level.DEBUG;
+import static java.util.stream.Collectors.joining;
 
 
 public class DockerClient implements AutoCloseable {
@@ -80,7 +81,16 @@ public class DockerClient implements AutoCloseable {
             if (id.isPresent()) {
                 return new DockerImage(id.get());
             } else {
-                throw new DockerException("Unable to build image");
+                String streamOfResults = Arrays.stream(lines.split("\n"))
+                        .map(String::trim)
+                        .filter(stripper::match)
+                        .map(stripper::strip)
+                        .collect(joining("\n"));
+                String others = Arrays.stream(lines.split("\n"))
+                        .map(String::trim)
+                        .filter(s -> !stripper.match(s))
+                        .collect(joining("\n"));
+                throw new DockerException(MessageFormat.format("Unable to build image, no ID: {0}\n{1}", others, streamOfResults));
             }
 
         } catch (IOException e) {
@@ -88,7 +98,7 @@ public class DockerClient implements AutoCloseable {
         }
     }
 
-    public DockerContainer create(DockerImage image, String name, int port) throws DockerException {
+    public DockerContainer create(DockerImage image, String name, int port, List<String> binds, List<String> links) throws DockerException {
         try {
             HttpPost request = new HttpPost(BASE_RESOURCE + "/containers/create?name=" + name);
 
@@ -102,14 +112,20 @@ public class DockerClient implements AutoCloseable {
             ports.put("" + port + "/tcp", new JSONObject());
             body.put("ExposedPorts", ports);
 
+            Map<String, Object> hostConfig = new HashMap<>();
             List<Map<String, String>> hostPortList = new ArrayList<>();
             Map<String, String> hostPortMap = new HashMap<>();
             hostPortMap.put("HostPort", "" + port);
             hostPortList.add(hostPortMap);
             Map<String, Object> portBindings = new HashMap<>();
             portBindings.put("" + port + "/tcp", hostPortList);
-            Map<String, Object> hostConfig = new HashMap<>();
             hostConfig.put("PortBindings", portBindings);
+            if (!binds.isEmpty()) {
+                hostConfig.put("Binds", binds);
+            }
+            if (!links.isEmpty()) {
+                hostConfig.put("Links", links);
+            }
             body.put("HostConfig", hostConfig);
             JSONObject jsonBody = new JSONObject(body);
             String jsonBodyString = jsonBody.toJSONString();
@@ -157,6 +173,72 @@ public class DockerClient implements AutoCloseable {
         } catch (IOException e) {
             throw new DockerException("Failed to start container", e);
         }
+    }
+
+    public String exec(DockerContainer container, String... cmd) throws DockerException {
+        try {
+
+            String jsonBodyString = "{\n" +
+                    "  \"AttachStdin\": false,\n" +
+                    "  \"AttachStdout\": true,\n" +
+                    "  \"AttachStderr\": true,\n" +
+                    "  \"DetachKeys\": \"ctrl-p,ctrl-q\",\n" +
+                    "  \"Tty\": true,\n" +
+                    "  \"Cmd\": "  +
+                    "    " + quotedJsonStringList(cmd) +
+                    "  \n" +
+                    "}";
+
+            HttpPost request = new HttpPost(BASE_RESOURCE + "/containers/" + container.getId() + "/exec");
+            request.setEntity(new StringEntity(jsonBodyString, ContentType.APPLICATION_JSON));
+            CloseableHttpResponse result = httpClient.execute(request);
+            int code = result.getStatusLine().getStatusCode();
+            if (code != 201) {
+                switch (code) {
+                    case 400: throw new DockerException("Bad parameter");
+                    case 404: throw new DockerException("No such container");
+                    case 409: throw new DockerException("Container is paused");
+                    case 500: throw new DockerException("Server error");
+                    default: throw new DockerException("Unknown error " + code);
+                }
+            }
+
+            String json = EntityUtils.toString(result.getEntity(), "UTF-8");
+            JSONParser parser = new JSONParser();
+            JSONObject jresult = (JSONObject) parser.parse(json);
+            String id = (String) jresult.get("Id");
+            if (id == null) {
+                throw new IOException("Unable to find Id of exec: " + json);
+            }
+
+            jsonBodyString = "{\n" +
+                    "  \"Detach\": false,\n" +
+                    "  \"Tty\": true\n" +
+                    "}";
+
+            request = new HttpPost(BASE_RESOURCE + "/exec/" + id + "/start");
+            request.setEntity(new StringEntity(jsonBodyString, ContentType.APPLICATION_JSON));
+            result = httpClient.execute(request);
+            code = result.getStatusLine().getStatusCode();
+            if (code != 200) {
+                switch (code) {
+                    case 404: throw new DockerException("No such exec");
+                    case 409: throw new DockerException("Container is stopped or paused");
+                    case 500: throw new DockerException("Server error");
+                    default: throw new DockerException("Unknown error " + code);
+                }
+            }
+
+            return EntityUtils.toString(result.getEntity(), "UTF-8").replace("\r\n", "\n");
+        } catch (IOException | ParseException e) {
+            throw new DockerException("Failed to exec", e);
+        }
+    }
+
+    private String quotedJsonStringList(String[] cmd) {
+        return "[ " + Arrays.stream(cmd)
+                .map(s -> '"' + s + '"')
+                .collect(joining(", ")) + " ]";
     }
 
 
@@ -217,7 +299,7 @@ public class DockerClient implements AutoCloseable {
                     case 404: throw new DockerException("No such container");
                     case 409: throw new DockerException("Conflict");
                     case 500: throw new DockerException("Server error");
-                    default: throw new DockerException("Unknown error");
+                    default: throw new DockerException("Unknown error" + code);
                 }
             }
         } catch (IOException e) {
