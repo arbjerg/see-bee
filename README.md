@@ -10,13 +10,12 @@ SQL Server (2017 and above) and Postgres (9.6 and above).
 
 **Configuration**
 
-In terms of cluster configuration, the See Bee Docker container needs two things
+In terms of cluster configuration, the See Bee Docker container needs two things:
 
 1. A link to a SQL Server.
 2. A mount of a working directory where Parquet files will be spooled.
 
 To configure See Bee itself, [a YAML file](applications/sql-server-parquet-application/default-config.yaml)
-
 is included in the container at build 
 time. At run time, all configuration options may be overridden by command line
 parameters sent to the docker instance.
