@@ -72,6 +72,20 @@ public interface HasComponents {
      */
     <T> T getOrThrow(Class<T> type);
 
+
+    /**
+     * Creates an returns a new {@link Stream} with all components that have
+     * the given {@code trait}.
+     *
+     * @param <T> trait type and Stream element type
+     * @param trait class of the trait and elements in the returned Stream
+     * @return a new {@link Stream} with all components that have
+     * the given {@code trait}
+     *
+     * @throws NullPointerException if the provided {@code trait} is null
+     */
+    <T> Stream<T> streamOfTrait(Class<T> trait);
+
     /**
      * Creates and returns a new Optional of the <em>last</em> Parameter that
      * was ever provided for the given {@code parameterType}.If no such
@@ -88,5 +102,4 @@ public interface HasComponents {
      * null or if the provided {@code name} is null
      */
     <T extends Parameter<?>> Optional<T> getParameter(Class<T> parameterType, String name);
-
 }

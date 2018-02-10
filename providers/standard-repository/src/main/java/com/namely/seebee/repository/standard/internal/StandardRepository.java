@@ -17,25 +17,28 @@
 package com.namely.seebee.repository.standard.internal;
 
 import com.namely.seebee.repository.Repository;
+import com.namely.seebee.repositoryclient.HasConfiguration;
 import com.namely.seebee.repositoryclient.Parameter;
-import java.lang.System.Logger;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
-
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  *
  * @author Per Minborg
  */
-final class StandardRepository implements Repository {
+final class StandardRepository implements Repository, HasConfiguration {
 
-    private static final Logger LOGGER = System.getLogger(StandardRepository.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(StandardRepository.class.getName());
 
     private final Map<Class<?>, List<Object>> componentMap;
     private final List<Object> componentList;
@@ -74,6 +77,17 @@ final class StandardRepository implements Repository {
         return HasComponentUtil.getParameter(componentMap, parameterType, name);
     }
 
+    public <T> Stream<T> streamOfTrait(Class<T> trait) {
+        assertNotClosed();
+        return HasComponentUtil.streamOfTrait(componentList, trait);
+    }
+
+    @Override
+    public <T> T getConfiguration(Class<T> configurationBeanClass) {
+        assertNotClosed();
+        return HasComponentUtil.getConfiguration(componentMap, configurationBeanClass);
+    }
+
     @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
@@ -85,15 +99,15 @@ final class StandardRepository implements Repository {
             closeableComponents
                     .forEach(ac -> {
                         try {
-                            LOGGER.log(Logger.Level.INFO, "Closing " + ac.getClass().getName());
+                            LOGGER.fine(() -> "Closing " + ac.getClass().getName());
                             ac.close();
                         } catch (Exception e) {
-                            LOGGER.log(Logger.Level.ERROR, "Error while closing " + ac.getClass().getName(), e);
+                            LOGGER.log(Level.SEVERE, e, () -> "Error while closing " + ac.getClass().getName());
                         }
                     });
             componentList.clear();
             componentMap.clear();
-            LOGGER.log(Logger.Level.INFO, Repository.class.getSimpleName() + " was closed");
+            LOGGER.fine(() -> Repository.class.getSimpleName() + " was closed");
         }
     }
 

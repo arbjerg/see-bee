@@ -16,6 +16,8 @@
  */
 module com.namely.seebee.repository.standard {
     requires transitive com.namely.seebee.repository;
-    
+    requires com.namely.seebee.configuration;
+    requires java.logging;
+
     exports com.namely.seebee.repository.standard;
 }

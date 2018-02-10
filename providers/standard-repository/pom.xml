@@ -40,6 +40,11 @@
             <artifactId>repository</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.namely.seebee</groupId>
+            <artifactId>configuration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     
 </project>

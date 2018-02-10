@@ -17,6 +17,8 @@
 package com.namely.seebee.repository;
 
 import com.namely.seebee.repositoryclient.HasComponents;
+import com.namely.seebee.repositoryclient.HasConfiguration;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -40,7 +42,7 @@ import java.util.function.Supplier;
  *
  * @author Per Minborg
  */
-public interface Repository extends HasComponents, AutoCloseable {
+public interface Repository extends HasConfiguration, AutoCloseable {
 
     /**
      * Closes this Repository and recursively closes all components that

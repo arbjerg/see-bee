@@ -16,8 +16,9 @@
  */
 module com.namely.seebee.configuration.yaml {
     requires transitive com.namely.seebee.configuration;
-    requires com.namely.seebee.configuration.support;
     requires transitive com.namely.seebee.repositoryclient;
-    
+    requires jackson.core;
+    requires jackson.databind;
+    requires jackson.dataformat.yaml;
     exports com.namely.seebee.configuration.yaml;
 }

@@ -37,8 +37,29 @@
         </dependency>
         <dependency>
             <groupId>com.namely.seebee</groupId>
+            <artifactId>repositoryclient</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.namely.seebee</groupId>
             <artifactId>configuration-support</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.namely.seebee</groupId>
+            <artifactId>standard-repository</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>               
     

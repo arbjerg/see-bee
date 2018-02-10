@@ -15,5 +15,6 @@
  * the License.
  */
 module com.namely.seebee.repositoryclient {
+    requires com.namely.seebee.configuration;
     exports com.namely.seebee.repositoryclient;
 }

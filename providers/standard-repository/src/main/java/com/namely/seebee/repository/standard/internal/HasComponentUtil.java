@@ -16,14 +16,15 @@
  */
 package com.namely.seebee.repository.standard.internal;
 
+import com.namely.seebee.configuration.ConfigurationException;
+import com.namely.seebee.configuration.ConfigurationResolver;
 import com.namely.seebee.repositoryclient.Parameter;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import static java.util.Objects.requireNonNull;
-import java.util.Optional;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.stream.Stream;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  *
@@ -66,4 +67,25 @@ final class HasComponentUtil {
             .reduce((a, b) -> b);
     }
 
+    public static <T> Stream<T> streamOfTrait(List<Object> componentList, Class<T> trait) {
+        return componentList.stream()
+                .filter(trait::isInstance)
+                .map(trait::cast);
+    }
+
+    public static <T> T getConfiguration(Map<Class<?>, List<Object>> map, Class<T> configurationBeanClass) {
+        Optional<T> bean = get(map, configurationBeanClass);
+        if (bean.isPresent()) {
+            return bean.get();
+        }
+        Optional<ConfigurationResolver> resolver = get(map, ConfigurationResolver.class);
+        if (resolver.isPresent()) {
+            return resolver.get().createAndUpdate(configurationBeanClass);
+        }
+        try {
+            return configurationBeanClass.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ConfigurationException(e);
+        }
+    }
 }

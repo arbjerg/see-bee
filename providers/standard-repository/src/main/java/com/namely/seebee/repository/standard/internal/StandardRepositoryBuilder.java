@@ -16,26 +16,26 @@
  */
 package com.namely.seebee.repository.standard.internal;
 
-import com.namely.seebee.repositoryclient.HasComponents;
-import com.namely.seebee.repositoryclient.Parameter;
 import com.namely.seebee.repository.Repository;
-import com.namely.seebee.repository.Repository.Builder.HasWith;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import static java.util.Objects.requireNonNull;
-import java.util.Optional;
+import com.namely.seebee.repositoryclient.*;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.logging.Level.SEVERE;
 
 /**
  *
  * @author Per Minborg
  */
 public class StandardRepositoryBuilder implements Repository.Builder {
+
+    private static final Logger LOGGER = Logger.getLogger(StandardRepositoryBuilder.class.getName());
 
     private final Map<Class<?>, List<Object>> componentMap;
     /**
@@ -80,10 +80,51 @@ public class StandardRepositoryBuilder implements Repository.Builder {
         return HasComponentUtil.getParameter(componentMap, parameterType, name);
     }
 
+    public <T> Stream<T> streamOfTrait(Class<T> trait) {
+        assertNotClosed();
+        return HasComponentUtil.streamOfTrait(componentList, trait);
+    }
+
     @Override
     public Repository build() {
         if (closed.compareAndSet(false, true)) {
-            return new StandardRepository(componentMap, componentList);
+            StandardRepository repository = new StandardRepository(componentMap, componentList);
+            LOGGER.fine("Initializing components");
+
+            repository.streamOfTrait(HasInitialize.class)
+                    .forEach(c -> {
+                        LOGGER.fine("Initializing " + c.getClass().getSimpleName());
+                        try {
+                            c.initialize(repository);
+                        } catch (Throwable t) {
+                            LOGGER.log(SEVERE, t, () -> "Failed to initialize " + c);
+                            throw t;
+                        }
+                    });LOGGER.fine("Resolving components");
+
+            repository.streamOfTrait(HasResolve.class)
+                    .forEach(c -> {
+                        LOGGER.fine("Resolving " + c.getClass().getSimpleName());
+                        try {
+                            c.resolve(repository);
+                        } catch (Throwable t) {
+                            LOGGER.log(SEVERE, t, () -> "Failed to resolve " + c);
+                            throw t;
+                        }
+                    });
+            LOGGER.fine("Starting components");
+            repository.streamOfTrait(HasStart.class)
+                    .forEach(c -> {
+                        LOGGER.fine("Starting " + c.getClass().getSimpleName());
+                        try {
+                            c.start(repository);
+                        } catch (Throwable t) {
+                            LOGGER.log(SEVERE, t, () -> "Failed to start " + c);
+                            throw t;
+                        }
+                    });
+            LOGGER.fine("All systems up and running");
+            return repository;
         } else {
             throw newClosedException();
         }
