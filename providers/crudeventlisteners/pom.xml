@@ -19,22 +19,22 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>configuration-support</artifactId>
-    <packaging>jar</packaging>
-    <name>Configuration Support</name>
-
+    <artifactId>crudeventlisteners</artifactId>
+    <packaging>pom</packaging>
+    
     <parent>
         <groupId>com.namely.seebee</groupId>
-        <artifactId>configurations</artifactId>
+        <artifactId>providers</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
+
+    <name>CRUD Event Listeners</name>
+    <description>
+        CRUD Event Listeners Parent Module
+    </description>
     
-    <dependencies>
-        <dependency>
-            <groupId>com.namely.seebee</groupId>
-            <artifactId>configuration</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>               
+    <modules>
+        <module>parquet</module>
+    </modules>
     
 </project>

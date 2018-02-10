@@ -41,6 +41,7 @@
         <module>standard-softwareinfo</module>
         <module>standard-typemapper</module>
         <module>crudreactors</module>
+        <module>crudeventlisteners</module>
     </modules>
     
 </project>
