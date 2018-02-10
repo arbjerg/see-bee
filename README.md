@@ -92,10 +92,10 @@ A script is available that does this:
 > ./demo.sh
 ```
 
-Actually, this script will create four containers in total, there are two Spark 
+Actually, this script will create four containers in total since there are two Spark 
 containers, one for each tracked table.
 
-Having the three containers running, updating the tables of the SQL Server container
+Having the four containers running, updating the tables of the SQL Server container
 (using a connection to port 1433) will yield printouts in the running Spark container
 logs.
 
