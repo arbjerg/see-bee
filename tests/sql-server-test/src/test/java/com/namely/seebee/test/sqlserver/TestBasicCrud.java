@@ -1,12 +1,13 @@
 package com.namely.seebee.test.sqlserver;
 
-import com.namely.seebee.application.internal.util.RepositoryUtil;
-import com.namely.seebee.configuration.Configuration;
+import com.namely.seebee.application.support.logging.SeeBeeLogging;
 import com.namely.seebee.crudreactor.*;
 import com.namely.seebee.crudreactor.sqlserver.SqlServerCrudReactor;
+import com.namely.seebee.crudreactor.sqlserver.internal.Configuration;
 import com.namely.seebee.dockerdb.DockerException;
 import com.namely.seebee.dockerdb.TestDatabase;
 import com.namely.seebee.repository.Repository;
+import com.namely.seebee.repository.standard.internal.StandardRepositoryBuilder;
 import com.namely.seebee.typemapper.TypeMapper;
 import com.namely.seebee.typemapper.standard.StandardTypeMapper;
 import org.junit.jupiter.api.Test;
@@ -17,12 +18,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
 
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class TestBasicCrud {
+
+    static {
+        SeeBeeLogging.setSeeBeeLoggingLevel(Level.WARNING);
+    }
 
     private static final String DB_NAME = "speedment";
     private static final String DB_USER = "sa";
@@ -31,21 +37,21 @@ final class TestBasicCrud {
 
     @Test
     void testConnect() throws DockerException, IOException, InterruptedException {
-        TestDatabase sqlserver = TestDatabase.createDockerDatabase("sqlserver");
+        TestDatabase sqlserver = TestDatabase.create("sqlserver").start();
         //Thread.sleep(10_000_000);
         sqlserver.close();
     }
 
     private Repository buildRepository(TestDatabase db, EventSink sink) {
-        return RepositoryUtil.standardRepositoryBuilder()
+        return new StandardRepositoryBuilder()
                 .provide(TypeMapper.class).with(new StandardTypeMapper())
-                .provide(Configuration.class).with(new TestConfig(db))
+                .provide(Configuration.class).with(new HystericTestConfig(db))
                 .provide(CrudEventListener.class).with(sink)
-                .provide(SqlServerCrudReactor.class).applying(SqlServerCrudReactor::create)
+                .provide(SqlServerCrudReactor.class).with(SqlServerCrudReactor.create())
                 .build();
     }
 
-    private class EventSink implements CrudEventListener, AutoCloseable {
+    private class EventSink implements CrudEventListener {
         private final List<RowEvent> allEvents = new ArrayList<>();
         private volatile SQLException exceptionBeforeClose;
 
@@ -58,11 +64,16 @@ final class TestBasicCrud {
         public void newEvents(CrudEvents events) {
             synchronized (allEvents) {
                 try {
-                    events.stream().forEach(allEvents::add);
-                } catch (SQLException e) {
-                    exceptionBeforeClose = e;
+                    events.tableEvents().forEach(tableEvents -> tableEvents.stream().forEach(allEvents::add));
+                } catch (Exception e) {
+                    exceptionBeforeClose = new SQLException(e);
                 }
             }
+        }
+
+        @Override
+        public boolean join(long timeoutMs) {
+            return true;
         }
 
         List<RowEvent> events() {
@@ -80,7 +91,7 @@ final class TestBasicCrud {
     @Test
     void testTrackInserts() throws Exception {
 
-        try (TestDatabase db = TestDatabase.createDockerDatabase("sqlserver");
+        try (TestDatabase db = TestDatabase.create("sqlserver").start();
              EventSink sink = new EventSink();
              Repository repository = buildRepository(db, sink);
              SqlServerCrudReactor reactor = repository.getOrThrow(SqlServerCrudReactor.class)) {
@@ -109,16 +120,18 @@ final class TestBasicCrud {
                 }
             }
 
-            while (sink.events().size() < n) {
+            while (sink.events().size() < n && System.currentTimeMillis() < deadLine) {
                 Thread.sleep(100);
             }
+
+            assertTrue(sink.events().size() >= n);
 
             List<RowEvent> events = sink.events();
             for (int i = 0; i < events.size(); i++) {
                 final int idx = i;
                 RowEvent event = events.get(idx);
                 assertEquals(CrudEventType.ADD, event.type());
-                event.values().columns().forEach(column -> {
+                event.data().columns().forEach(column -> {
                     switch(column.name()) {
                         case "id":
                             assertEquals(idx, column.get());
@@ -134,12 +147,14 @@ final class TestBasicCrud {
                     }
                 });
             }
+            Thread.sleep(1000);
+            assertEquals(n, sink.events().size(), "too many events received");
         }
     }
 
     @Test
     void testTrackUpdates() throws Exception {
-        try (TestDatabase db = TestDatabase.createDockerDatabase("sqlserver");
+        try (TestDatabase db = TestDatabase.create("sqlserver").start();
              EventSink sink = new EventSink();
              Repository repository = buildRepository(db, sink);
              SqlServerCrudReactor reactor = repository.getOrThrow(SqlServerCrudReactor.class)) {
@@ -200,7 +215,7 @@ final class TestBasicCrud {
                 try {
                     Map<Integer, Integer> states = new HashMap<>();
                     sink.events().forEach(event -> {
-                        Map<String, Integer> intValues = event.values().columns()
+                        Map<String, Integer> intValues = event.data().columns().stream()
                                 .collect(HashMap::new, (m, c) -> {
                                     if (int.class.equals(c.javaType())) {
                                         m.put(c.name(), (Integer) c.get());
@@ -222,7 +237,7 @@ final class TestBasicCrud {
 
     @Test
     void testTrackDeletes() throws Exception {
-        try (TestDatabase db = TestDatabase.createDockerDatabase("sqlserver");
+        try (TestDatabase db = TestDatabase.create("sqlserver").start();
              EventSink sink = new EventSink();
              Repository repository = buildRepository(db, sink);
              SqlServerCrudReactor reactor = repository.getOrThrow(SqlServerCrudReactor.class)) {
@@ -284,7 +299,7 @@ final class TestBasicCrud {
 
                     sink.events().forEach(event -> {
                         if (CrudEventType.REMOVE.equals(event.type())) {
-                            event.values().columns()
+                            event.data().columns().stream()
                                     .filter(c -> "id".equals(c.name()))
                                     .limit(1)
                                     .forEach(columnValue -> deleted[(int) columnValue.get()] = true);

@@ -1,25 +1,15 @@
 package com.namely.seebee.test.sqlserver;
 
-import com.namely.seebee.configuration.Configuration;
+import com.namely.seebee.crudreactor.sqlserver.internal.Configuration;
 import com.namely.seebee.dockerdb.TestDatabase;
 
 import java.util.Optional;
 
-public class TestConfig implements Configuration {
+public abstract class AbstractTestConfig extends Configuration {
     private final TestDatabase db;
 
-    TestConfig(TestDatabase db) {
+    AbstractTestConfig(TestDatabase db) {
         this.db = db;
-    }
-
-    @Override
-    public int changesPollIntervalMilliSeconds() {
-        return 24;
-    }
-
-    @Override
-    public int schemaReloadIntervalMilliSeconds() {
-        return 100;
     }
 
     @Override
