@@ -14,10 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.namely.seebee.application.internal.util;
+package com.namely.seebee.application.sqlserver.parquet.internal.util;
 
-import com.namely.seebee.configuration.Configuration;
-import com.namely.seebee.configuration.standard.StandardConfigurations;
 import com.namely.seebee.repository.Repository;
 import com.namely.seebee.repository.standard.StandardRepositories;
 import com.namely.seebee.softwareinfo.SoftwareInfo;
@@ -34,7 +32,6 @@ public  final class RepositoryUtil {
     
     public static Repository.Builder standardRepositoryBuilder() {
         return StandardRepositories.builder()
-            .provide(Configuration.class).getting(StandardConfigurations::create)
             .provide(SoftwareInfo.class).getting(StandardSoftwareInfos::seeBee)
             .provide(SoftwareInfo.class).getting(StandardSoftwareInfos::java);
     }

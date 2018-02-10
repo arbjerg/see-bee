@@ -14,13 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-module com.namely.seebee.application {
-    //requires com.namely.seebee.configuration;
-    requires com.namely.seebee.configuration.standard;
-    requires com.namely.seebee.configuration.yaml;
-//    requires com.namely.seebee.repository;
-    requires com.namely.seebee.repository.standard;
-//    requires com.namely.seebee.typemapper;
-    requires com.namely.seebee.typemaper.standard;
-    requires com.namely.seebee.softwareinfo.standard;
+module com.namely.seebee.application.support {
+    requires com.namely.seebee.configuration;
+    requires transitive java.logging;
+    exports com.namely.seebee.application.support.config;
+    exports com.namely.seebee.application.support.logging;
 }

@@ -30,7 +30,8 @@
     </parent>
     
     <modules>
-        <module>standard-application</module>
+        <module>sql-server-parquet-application</module>
+        <module>application-support</module>
     </modules>
 
 </project>

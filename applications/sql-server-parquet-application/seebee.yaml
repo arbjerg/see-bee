@@ -1,0 +1,18 @@
+# Seebee example configuration
+
+system:
+  loggingLevel: ALL
+
+parquet:
+  workDirectory: /tmp/parquet
+  spoolDirectory: /tmp/parquet/spool
+
+sqlserver-reactor:
+  jdbcHostName: sqlserver
+  jdbcDatabasename: speedment
+  jdbcUsername: sa
+  jdbcPassword: Password1
+  changesPollIntervalMillis: 1000
+  schemaReloadIntervalMillis: 60000
+
+

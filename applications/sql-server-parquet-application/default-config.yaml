@@ -1,0 +1,21 @@
+# Seebee Docker container default configuration
+
+system:
+  loggingLevel: INFO  # FINEST, FINER, FINE, INFO, WARNING, SEVERE, ALL
+
+parquet:
+  workDirectory: /parquet
+  spoolDirectory: /parquet/spool
+  dictionaryEncodingEnabled: true
+  compressionCodec: SNAPPY  # UNCOMPRESSED, SNAPPY, GZIP, LZO
+
+sqlserver-reactor:
+  jdbcHostName: sqlserver
+  jdbcPort: 1433
+  jdbcDatabasename: speedment
+  jdbcUsername: sa
+  jdbcPassword: Password1
+  changesPollIntervalMillis: 1000
+  schemaReloadIntervalMillis: 60000
+
+

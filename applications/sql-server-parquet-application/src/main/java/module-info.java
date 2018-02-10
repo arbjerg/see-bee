@@ -14,9 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-module com.namely.seebee.configuration.standard {
-    requires transitive com.namely.seebee.configuration;
-    requires  com.namely.seebee.configuration.support;
-    
-    exports com.namely.seebee.configuration.standard;
+module com.namely.seebee.application {
+    requires com.namely.seebee.crudreactor.sqlserver;
+    requires com.namely.seebee.typemaper.standard;
+    requires com.namely.seebee.softwareinfo;
+    requires com.namely.seebee.repository;
+    requires com.namely.seebee.repository.standard;
+    requires com.namely.seebee.softwareinfo.standard;
+    requires com.namely.seebee.configuration;
+    requires com.namely.seebee.configuration.yaml;
+    requires com.namely.seebee.crudeventlistener.parquet;
+    requires com.namely.seebee.application.support;
 }

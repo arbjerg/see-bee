@@ -14,10 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.namely.seebee.application.internal.util;
+package com.namely.seebee.application.sqlserver.parquet.internal.util;
 
 import com.namely.seebee.softwareinfo.SoftwareInfo;
+
+import java.text.MessageFormat;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -26,7 +29,7 @@ import java.util.stream.Stream;
  */
 public final class GreetingUtil {
 
-    private static final System.Logger LOGGER = System.getLogger(GreetingUtil.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GreetingUtil.class.getName());
 
     private GreetingUtil() {
         throw new UnsupportedOperationException();
@@ -45,7 +48,7 @@ public final class GreetingUtil {
             System.out.println(GreetingUtil.generalGreetingMessage(info));
         }
         if (!info.isProductionMode()) {
-            LOGGER.log(System.Logger.Level.WARNING, "This version of " + info.name() + " is NOT INTENDED FOR PRODUCTION USE!");
+            LOGGER.warning(() -> MessageFormat.format("This version of {0} is NOT INTENDED FOR PRODUCTION USE!", info.name()));
         }
     }
 
