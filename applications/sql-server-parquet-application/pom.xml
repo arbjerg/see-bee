@@ -94,11 +94,6 @@
         </dependency>
         <dependency>
             <groupId>com.namely.seebee</groupId>
-            <artifactId>standard-configuration</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.namely.seebee</groupId>
             <artifactId>yaml-configuration</artifactId>
             <version>${project.version}</version>
         </dependency>
