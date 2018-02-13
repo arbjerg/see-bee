@@ -12,6 +12,11 @@ SET CHANGE_TRACKING = ON
 
 go
 
+ALTER DATABASE speedment
+SET ALLOW_SNAPSHOT_ISOLATION ON
+
+go
+
 USE speedment;
 
 

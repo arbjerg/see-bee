@@ -1,8 +1,8 @@
 package com.namely.seebee.crudreactor.sqlserver.internal.engine;
 
 import com.namely.seebee.crudreactor.HasColumnMetadata;
-import com.namely.seebee.crudreactor.RowEvent;
 import com.namely.seebee.crudreactor.RowData;
+import com.namely.seebee.crudreactor.RowEvent;
 import com.namely.seebee.crudreactor.TableCrudEvents;
 import com.namely.seebee.crudreactor.sqlserver.internal.data.TrackedColumn;
 import com.namely.seebee.crudreactor.sqlserver.internal.data.TrackedTable;
@@ -30,11 +30,11 @@ class LazyCrudEventsStreamSupplier implements TableCrudEvents {
 
     private final SqlServerNumberedVersion startVersion;
     private final SqlServerNumberedVersion endVersion;
-    private final ConfigurationState configState;
+    private final Connection connection;
     private final TrackedTable table;
 
-    LazyCrudEventsStreamSupplier(ConfigurationState configState, TrackedTable table, SqlServerNumberedVersion startVersion, SqlServerNumberedVersion endVersion) {
-        this.configState = configState;
+    LazyCrudEventsStreamSupplier(Connection connection, TrackedTable table, SqlServerNumberedVersion startVersion, SqlServerNumberedVersion endVersion) {
+        this.connection = connection;
         this.table = table;
         this.startVersion = startVersion;
         this.endVersion = endVersion;
@@ -61,12 +61,10 @@ class LazyCrudEventsStreamSupplier implements TableCrudEvents {
     }
 
     private class EventIterator implements Iterator<RowEvent> {
-        private final Connection connection;
         private final ResultSet resultSet;
         private RowEvent next;
 
         private EventIterator() throws SQLException {
-            connection = configState.createConnection();
             resultSet = queryDatabase();
             advance();
         }
@@ -135,12 +133,6 @@ class LazyCrudEventsStreamSupplier implements TableCrudEvents {
                 resultSet.close();
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "Failed to close result set", e);
-            }
-
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Failed to close connection", e);
             }
         }
 

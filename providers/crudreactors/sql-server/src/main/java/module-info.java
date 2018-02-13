@@ -20,6 +20,7 @@ module com.namely.seebee.crudreactor.sqlserver {
     requires com.namely.seebee.configuration;
     requires com.namely.seebee.typemapper;
     requires java.sql;
+    requires mssql.jdbc;
 
     exports com.namely.seebee.crudreactor.sqlserver;
 }
