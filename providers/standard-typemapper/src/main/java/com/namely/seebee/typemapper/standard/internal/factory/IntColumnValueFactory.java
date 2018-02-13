@@ -33,7 +33,7 @@ public class IntColumnValueFactory implements ColumnValueFactory<Integer> {
     private final String columnName;
 
     public IntColumnValueFactory(ColumnMetaData metaData) {
-        this.columnName = requireNonNull(metaData).getColumnName();
+        this.columnName = requireNonNull(metaData).columnName();
     }
 
     @Override

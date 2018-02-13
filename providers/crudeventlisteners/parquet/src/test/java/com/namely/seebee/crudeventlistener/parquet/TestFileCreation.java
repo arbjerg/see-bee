@@ -1,7 +1,7 @@
 package com.namely.seebee.crudeventlistener.parquet;
 
 import com.namely.seebee.application.support.logging.SeeBeeLogging;
-import com.namely.seebee.crudeventlistener.parquet.internal.crud.ParquetFileCrudEventListener;
+import com.namely.seebee.crudeventlistener.parquet.internal.ParquetFileCrudEventListener;
 import com.namely.seebee.crudreactor.CrudEventListener;
 import com.namely.seebee.crudreactor.CrudEvents;
 import com.namely.seebee.repositoryclient.HasConfiguration;

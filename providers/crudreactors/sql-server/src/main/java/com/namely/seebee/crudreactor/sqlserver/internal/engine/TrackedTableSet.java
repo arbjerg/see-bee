@@ -72,7 +72,7 @@ public class TrackedTableSet {
                     SqlServerColumnMetadata metaData = new SqlServerColumnMetadata(
                             schemaName, tableName, columnName, columns
                     );
-                    builder.withColumn(columnName, typeMapper.createFactory(metaData), metaData.isNullableNull());
+                    builder.withColumn(columnName, typeMapper.createFactory(metaData), metaData);
                 }
             }
         }

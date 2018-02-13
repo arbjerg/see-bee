@@ -1,60 +1,83 @@
 package com.namely.seebee.crudreactor.sqlserver.internal.data;
 
+import com.namely.seebee.typemapper.ColumnMetaData;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
-public class SqlServerColumnMetadata extends ColumnMetadataAdapter {
+import static java.util.Objects.requireNonNull;
+
+public class SqlServerColumnMetadata implements ColumnMetaData {
     private final String schema;
     private final String tableName;
     private final String name;
     private final int dataType;
     private final String typeName;
     private final int size;
-    private final int nullable;
+    private final Boolean nullable;
+    private final int decimalDigits;
 
     public SqlServerColumnMetadata(String schema, String tableName, String name, ResultSet columns) throws SQLException {
-        this.schema = schema;
-        this.tableName = tableName;
-        this.name = name;
+        this.schema = requireNonNull(schema);
+        this.tableName = requireNonNull(tableName);
+        this.name = requireNonNull(name);
+
         dataType = columns.getInt("DATA_TYPE");
-        typeName = columns.getString("TYPE_NAME");
+        typeName = requireNonNull(columns.getString("TYPE_NAME"));
         size = columns.getInt("COLUMN_SIZE");
-        nullable = columns.getInt("NULLABLE");
+        decimalDigits = columns.getInt("DECIMAL_DIGITS");
+        String nullableString = columns.getString("IS_NULLABLE");
+        switch (nullableString) {
+            case "YES":
+                nullable = true;
+                break;
+            case "NO":
+                nullable = false;
+                break;
+            default:
+                nullable = null;
+        }
     }
 
 
     @Override
-    public String getTableSchem() {
+    public String tableSchem() {
         return schema;
     }
 
     @Override
-    public String getTableName() {
+    public String tableName() {
         return tableName;
     }
 
     @Override
-    public String getColumnName() {
+    public String columnName() {
         return name;
     }
 
     @Override
-    public int getDataType() {
+    public int dataType() {
         return dataType;
     }
 
     @Override
-    public String getTypeName() {
+    public String typeName() {
         return typeName;
     }
 
     @Override
-    public int getColumnSize() {
+    public int columnSize() {
         return size;
     }
 
     @Override
-    public int getNullable() {
-        return nullable;
+    public Optional<Boolean> nullable() {
+        return Optional.ofNullable(nullable);
+    }
+
+    @Override
+    public int decimalDigits() {
+        return decimalDigits;
     }
 }

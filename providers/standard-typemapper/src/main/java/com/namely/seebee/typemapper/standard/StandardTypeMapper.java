@@ -34,7 +34,7 @@ public class StandardTypeMapper implements TypeMapper {
 
     @Override
     public ColumnValueFactory<?> createFactory(ColumnMetaData columnMetaData) {
-        switch (columnMetaData.getDataType()) {
+        switch (columnMetaData.dataType()) {
             case Types.INTEGER:
                 return new IntColumnValueFactory(columnMetaData);
             case Types.VARCHAR:
@@ -42,8 +42,8 @@ public class StandardTypeMapper implements TypeMapper {
                 return new VarcharColumnValueFactory(columnMetaData);
         }
         throw new TypeMapperException(MessageFormat.format("column meta data cannot be mapped to a factory: {0} {1}",
-                columnMetaData.getTypeName(),
-                columnMetaData.getDataType()));
+                columnMetaData.typeName(),
+                columnMetaData.dataType()));
     }
 
     @Override

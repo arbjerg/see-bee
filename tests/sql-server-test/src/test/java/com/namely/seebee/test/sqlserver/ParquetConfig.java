@@ -1,6 +1,6 @@
 package com.namely.seebee.test.sqlserver;
 
-import com.namely.seebee.crudeventlistener.parquet.internal.ParquetWriterConfiguration;
+import com.namely.seebee.crudeventlistener.parquet.internal.parquet.ParquetWriterConfiguration;
 
 import java.io.File;
 import java.io.IOException;

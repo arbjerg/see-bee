@@ -1,5 +1,8 @@
 package com.namely.seebee.crudreactor;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * A CrudEventType is used to classify a database row change. Since changes are fetched in batches,
  * there is no guarantee that a sequence of CrudEvents constitutes a full audit trail of the database
@@ -25,5 +28,17 @@ public enum CrudEventType {
     /**
      * A row was removed from the database
      */
-    REMOVE
+    REMOVE;
+
+    private static final int MAX_NAME_LENGTH;
+
+    static {
+        MAX_NAME_LENGTH = Arrays.stream(values())
+                .max(Comparator.comparingInt(c -> c.name().length()))
+                .get().name().length();
+    }
+
+    public static int maxNameLength() {
+        return MAX_NAME_LENGTH;
+    }
 }

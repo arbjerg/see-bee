@@ -19,7 +19,6 @@ package com.namely.seebee.typemapper.standard.internal.factory;
 import com.namely.seebee.typemapper.ColumnMetaData;
 import com.namely.seebee.typemapper.ColumnValue;
 import com.namely.seebee.typemapper.ColumnValueFactory;
-import com.namely.seebee.typemapper.standard.internal.value.IntColumnValue;
 import com.namely.seebee.typemapper.standard.internal.value.StringColumnValue;
 
 import java.sql.ResultSet;
@@ -36,7 +35,7 @@ public class VarcharColumnValueFactory implements ColumnValueFactory<String> {
     private final String columnName;
 
     public VarcharColumnValueFactory(ColumnMetaData metaData) {
-        this.columnName = requireNonNull(metaData).getColumnName();
+        this.columnName = requireNonNull(metaData).columnName();
     }
 
     @Override

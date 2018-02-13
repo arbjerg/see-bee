@@ -1,6 +1,6 @@
-package com.namely.seebee.crudeventlistener.parquet.internal.crud;
+package com.namely.seebee.crudeventlistener.parquet.internal;
 
-import com.namely.seebee.crudeventlistener.parquet.internal.ParquetWriterConfiguration;
+import com.namely.seebee.crudeventlistener.parquet.internal.parquet.ParquetWriterConfiguration;
 import com.namely.seebee.crudreactor.CrudEventListener;
 import com.namely.seebee.crudreactor.CrudEvents;
 import com.namely.seebee.repositoryclient.HasConfiguration;

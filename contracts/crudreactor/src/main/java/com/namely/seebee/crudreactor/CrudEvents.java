@@ -24,5 +24,5 @@ public interface CrudEvents {
      *
      * @return a tableEvents of suppliers of database data changes streams, one ofr each table
      */
-    Stream<TableCrudEvents> tableEvents();
+    Stream<? extends TableCrudEvents> tableEvents();
 }

@@ -59,9 +59,4 @@ public class IntColumnValue extends AbstractNamedColumnValue implements ColumnVa
         return false;
     }
 
-    @Override
-    public void serialize(Object arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

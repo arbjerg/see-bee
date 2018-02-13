@@ -2,7 +2,7 @@ package com.namely.seebee.test.sqlserver;
 
 import com.namely.seebee.application.support.logging.SeeBeeLogging;
 import com.namely.seebee.crudeventlistener.parquet.ParquetCrudEventListener;
-import com.namely.seebee.crudeventlistener.parquet.internal.ParquetWriterConfiguration;
+import com.namely.seebee.crudeventlistener.parquet.internal.parquet.ParquetWriterConfiguration;
 import com.namely.seebee.crudreactor.CrudEventListener;
 import com.namely.seebee.crudreactor.CrudReactorState;
 import com.namely.seebee.crudreactor.sqlserver.SqlServerCrudReactor;

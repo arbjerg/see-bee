@@ -1,4 +1,4 @@
-package com.namely.seebee.crudeventlistener.parquet.internal;
+package com.namely.seebee.crudeventlistener.parquet.internal.parquet;
 
 import com.namely.seebee.configuration.ConfigurationException;
 import com.namely.seebee.configuration.ConfigurationResolver;

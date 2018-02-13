@@ -1,6 +1,6 @@
 package com.namely.seebee.crudeventlistener.parquet;
 
-import com.namely.seebee.crudeventlistener.parquet.internal.ParquetWriterConfiguration;
+import com.namely.seebee.crudeventlistener.parquet.internal.parquet.ParquetWriterConfiguration;
 import com.namely.seebee.repositoryclient.HasConfiguration;
 import com.namely.seebee.repositoryclient.Parameter;
 

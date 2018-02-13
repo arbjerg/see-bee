@@ -27,11 +27,6 @@ public class IntegerColumnValue implements ColumnValue<Integer> {
     }
 
     @Override
-    public void serialize(Object arg) {
-
-    }
-
-    @Override
     public Class<Integer> javaType() {
         return Integer.class;
     }

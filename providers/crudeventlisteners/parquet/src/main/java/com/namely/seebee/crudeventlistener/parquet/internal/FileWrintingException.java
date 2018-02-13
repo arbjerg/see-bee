@@ -1,4 +1,4 @@
-package com.namely.seebee.crudeventlistener.parquet.internal.crud;
+package com.namely.seebee.crudeventlistener.parquet.internal;
 
 class FileWrintingException extends RuntimeException {
     static final long serialVersionUID = 42;

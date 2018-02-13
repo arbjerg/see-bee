@@ -26,7 +26,7 @@ public interface CrudEventListener extends AutoCloseable {
      *
      * @param events a representation of recent database changes
      */
-    void newEvents(CrudEvents events);
+    void newEvents(CrudEvents events);  // TODO - either make this conform to Java Reactive Streams or document the reason for not to
 
     boolean join(long timeoutMs) throws InterruptedException;
 

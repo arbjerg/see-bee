@@ -1,18 +1,19 @@
 package com.namely.seebee.crudreactor.sqlserver.internal.data;
 
 import com.namely.seebee.crudreactor.HasColumnMetadata;
+import com.namely.seebee.typemapper.ColumnMetaData;
 import com.namely.seebee.typemapper.ColumnValueFactory;
 
 public class TrackedColumn implements HasColumnMetadata {
     private final String name;
     private final ColumnValueFactory<?> factory;
-    private final boolean nullable;
+    private final ColumnMetaData metaData;
     private final boolean pk;
 
-    public TrackedColumn(String name, ColumnValueFactory<?> factory, boolean nullable, boolean pk) {
+    public TrackedColumn(String name, ColumnValueFactory<?> factory, ColumnMetaData metaData, boolean pk) {
         this.name = name;
         this.factory = factory;
-        this.nullable = nullable;
+        this.metaData = metaData;
         this.pk = pk;
     }
 
@@ -30,8 +31,8 @@ public class TrackedColumn implements HasColumnMetadata {
     }
 
     @Override
-    public boolean nullable() {
-        return nullable;
+    public ColumnMetaData metaData() {
+        return metaData;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.namely.seebee.crudreactor.sqlserver.internal.data;
 
 import com.namely.seebee.crudreactor.HasColumnMetadata;
 import com.namely.seebee.crudreactor.HasTableMetadata;
+import com.namely.seebee.typemapper.ColumnMetaData;
 import com.namely.seebee.typemapper.ColumnValueFactory;
 
 import java.text.MessageFormat;
@@ -34,9 +35,9 @@ public class TrackedTable implements HasTableMetadata {
             return this;
         }
 
-        public Builder withColumn(String columnName, ColumnValueFactory<?> factory, boolean nullable) {
+        public Builder withColumn(String columnName, ColumnValueFactory<?> factory, ColumnMetaData metaData) {
             boolean pk = pkNames.contains(columnName);
-            columns.add(new TrackedColumn(columnName, factory, nullable, pk));
+            columns.add(new TrackedColumn(columnName, factory, metaData, pk));
             return this;
         }
 

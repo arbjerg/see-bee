@@ -1,7 +1,7 @@
-package com.namely.seebee.crudeventlistener.parquet.internal.crud;
+package com.namely.seebee.crudeventlistener.parquet.internal;
 
-import com.namely.seebee.crudeventlistener.parquet.internal.ParquetFileWriter;
-import com.namely.seebee.crudeventlistener.parquet.internal.ParquetWriterConfiguration;
+import com.namely.seebee.crudeventlistener.parquet.internal.parquet.ParquetFileWriter;
+import com.namely.seebee.crudeventlistener.parquet.internal.parquet.ParquetWriterConfiguration;
 import com.namely.seebee.crudreactor.CrudEvents;
 import com.namely.seebee.crudreactor.TableCrudEvents;
 
@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 class Batch {
     private static final Logger LOGGER = Logger.getLogger(Batch.class.getName());
@@ -58,16 +59,21 @@ class Batch {
 
     CompletableFuture<Batch> writeAsync(long timeoutMs) {
 
-        CompletableFuture<?>[] futures = events.tableEvents()
+        Stream<? extends TableCrudEvents> stream = events.tableEvents();
+
+        CompletableFuture<?>[] futures = stream
                 .map(tableEvents -> CompletableFuture.runAsync(() -> write(tableEvents, timeoutMs), executorService))
                 .toArray(CompletableFuture[]::new);
 
         return CompletableFuture.allOf(futures)
-                .whenComplete(this::done)
+                .whenComplete(($, t) -> {
+                    stream.close();
+                    this.done(t);
+                })
                 .thenApply($ -> this);
     }
 
-    private void done(Void $, Throwable throwable) {
+    private void done(Throwable throwable) {
         LOGGER.finer("Done");
         done = true;
         if (throwable != null) {

@@ -1,4 +1,4 @@
-package com.namely.seebee.crudeventlistener.parquet.internal.crud;
+package com.namely.seebee.crudeventlistener.parquet.internal;
 
 import java.io.File;
 import java.text.MessageFormat;

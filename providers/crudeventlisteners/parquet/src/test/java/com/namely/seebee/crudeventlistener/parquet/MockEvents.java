@@ -4,10 +4,12 @@ import com.namely.seebee.crudreactor.CrudEvents;
 import com.namely.seebee.crudreactor.HasColumnMetadata;
 import com.namely.seebee.crudreactor.RowEvent;
 import com.namely.seebee.crudreactor.TableCrudEvents;
+import com.namely.seebee.typemapper.ColumnMetaData;
 import com.namely.seebee.typemapper.ColumnValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -60,8 +62,48 @@ public class MockEvents implements CrudEvents {
             }
 
             @Override
-            public boolean nullable() {
-                return value.isNull();
+            public ColumnMetaData metaData() {
+                return new ColumnMetaData() {
+                    @Override
+                    public String tableSchem() {
+                        return null;
+                    }
+
+                    @Override
+                    public String tableName() {
+                        return null;
+                    }
+
+                    @Override
+                    public String columnName() {
+                        return null;
+                    }
+
+                    @Override
+                    public int dataType() {
+                        return 0;
+                    }
+
+                    @Override
+                    public String typeName() {
+                        return null;
+                    }
+
+                    @Override
+                    public int columnSize() {
+                        return 0;
+                    }
+
+                    @Override
+                    public Optional<Boolean> nullable() {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    public int decimalDigits() {
+                        return 0;
+                    }
+                };
             }
 
             @Override

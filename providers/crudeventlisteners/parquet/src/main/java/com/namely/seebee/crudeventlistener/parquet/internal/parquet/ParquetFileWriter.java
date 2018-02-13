@@ -1,4 +1,4 @@
-package com.namely.seebee.crudeventlistener.parquet.internal;
+package com.namely.seebee.crudeventlistener.parquet.internal.parquet;
 
 import com.namely.seebee.crudreactor.RowEvent;
 import com.namely.seebee.crudreactor.TableCrudEvents;

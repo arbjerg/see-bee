@@ -49,13 +49,4 @@ public interface ColumnValue<E> extends Supplier<E>, HasJavaType<E> {
      */
     boolean isNull();
 
-    /**
-     * Serializes the container value to an external target using the provided
-     * args.
-     *
-     * @param arg to be specified
-     */
-    //void serialize(Consumer<? super ColumnValue<? extends E>> serializer);
-    void serialize(Object arg);
-
 }
