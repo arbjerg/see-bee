@@ -60,12 +60,12 @@ For a basic demo of end-to-end communication, try out the following script:
 > ./demo.sh
 ```
 
-This script will create four containers in total, showcasing See Bee tracking changes in 
-the SQL Server container and creating Parquet files which are being watched by Spark containers.
+This script will create three containers in total, showcasing See Bee tracking changes in 
+the SQL Server container and creating Parquet files which are being watched by a Spark container.
  
-Having the four containers running, updating the tables of the SQL Server container
-(using a connection to port 1433) will yield printouts in the running Spark container
-logs.
+Having the three containers running, updating the SWITCHES table of the SQL Server 
+container (using a connection to port 1433) will yield printouts in the running Spark 
+container logs.
 
 ![See Bee](logo/see-bee.png)
 

@@ -29,3 +29,4 @@ RUN /bin/bash -c "(/dbserver.sh &) && ./dbclient.sh -w && echo 'Executing Schema
 
 CMD ["bash", "-c", "echo 'Starting DB, please wait...' && (/dbserver.sh &> /dev/null &) && /dbclient.sh --wait && /dbclient.sh && tail -f /dev/null"]
 
+HEALTHCHECK CMD /dbclient.sh -c

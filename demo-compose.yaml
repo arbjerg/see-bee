@@ -4,16 +4,6 @@ services:
     build: tests/sql-server-test/src/test/resources/sqlserver
     ports:
      - "1433:1433"
-  sparks:
-    build: tests/sql-server-test/src/test/resources/spark
-    volumes:
-     - /tmp/parquet/spool:/spool
-    command: spark-submit /stream_table.py SWITCHES
-  sparku:
-    build: tests/sql-server-test/src/test/resources/spark
-    volumes:
-     - /tmp/parquet/spool:/spool
-    command: spark-submit /stream_table.py USERS
   seebee:
     build:
       context: applications/sql-server-parquet-application
@@ -23,3 +13,12 @@ services:
      - /tmp/parquet:/parquet
     links:
      - sqlserver
+    depends_on:
+      - sqlserver
+  sparks:
+    build: tests/sql-server-test/src/test/resources/spark
+    volumes:
+     - /tmp/parquet/spool:/spool
+    command: spark-submit /stream_table.py SWITCHES
+    depends_on:
+      - seebee

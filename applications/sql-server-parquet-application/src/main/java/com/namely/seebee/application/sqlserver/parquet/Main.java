@@ -65,8 +65,9 @@ public class Main {
             SeeBeeLogging.setSeeBeeLoggingLevel(repo.getConfiguration(ApplicationConfiguration.class).getLoggingLevel());
             logger.fine(() -> "Started with parameters " + Arrays.stream(args).collect(joining(" ")));
             GreetingUtil.printGreeting(() -> repo.stream(SoftwareInfo.class));
+            System.out.println("Ctrl-C to quit");
             done.acquireUninterruptibly();
-            logger.info("Quitting");
+            logger.info("Exit requested. Shutting down.");
         }
     }
 
