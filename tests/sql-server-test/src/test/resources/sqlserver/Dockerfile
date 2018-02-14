@@ -27,5 +27,5 @@ RUN chmod +x dbserver.sh
 
 RUN /bin/bash -c "(/dbserver.sh &) && ./dbclient.sh -w && echo 'Executing Schema SQL:'; ./dbclient.sh -s /tmp/Schema.sql && echo 'Executing Data SQL:'; ./dbclient.sh -s /tmp/Data.sql"
 
-CMD ["bash", "-c", "echo 'Starting DB, please wait...' && (/dbserver.sh &> /dev/null &) && /dbclient.sh --wait && /dbclient.sh"]
+CMD ["bash", "-c", "echo 'Starting DB, please wait...' && (/dbserver.sh &> /dev/null &) && /dbclient.sh --wait && /dbclient.sh && tail -f /dev/null"]
 
