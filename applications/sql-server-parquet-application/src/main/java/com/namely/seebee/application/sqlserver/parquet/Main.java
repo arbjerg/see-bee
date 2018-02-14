@@ -36,6 +36,7 @@ import com.namely.seebee.typemapper.standard.StandardTypeMapper;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
 import static java.util.stream.Collectors.joining;
@@ -46,6 +47,8 @@ import static java.util.stream.Collectors.joining;
  * @author Dan Lawesson
  */
 public class Main {
+    private final Semaphore done = new Semaphore(0);
+
     public static void main(String[] args) {
         new Main().mainHelper(args);
     }
@@ -56,16 +59,13 @@ public class Main {
         setupLogging(commandLineConfig);
         Logger logger = Logger.getLogger(Main.class.getName());
 
+        Runtime.getRuntime().addShutdownHook(new Thread(done::release));
+
         try (Repository repo = buildRepository(commandLineConfig, paramSettings)) {
             SeeBeeLogging.setSeeBeeLoggingLevel(repo.getConfiguration(ApplicationConfiguration.class).getLoggingLevel());
             logger.fine(() -> "Started with parameters " + Arrays.stream(args).collect(joining(" ")));
             GreetingUtil.printGreeting(() -> repo.stream(SoftwareInfo.class));
-            System.out.println("Press return to quit");
-            try {
-                System.in.read();
-            } catch (IOException e) {
-                //
-            }
+            done.acquireUninterruptibly();
             logger.info("Quitting");
         }
     }
