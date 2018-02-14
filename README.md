@@ -54,47 +54,15 @@ parameters:
 
 **Demo**
 
-For a basic demo of end-to-end communication, first build seebee and its
-docker images.
-
-```commandline
-> mvn package
-```
-
-Thus running the tests will create docker images used by the tests 
-(`db-spark` and `db-sqlserver`) as well as a docker image of See Bee, 
-called `namely/seebee`. 
-
-```commandline
-> docker images | head -4 | cut -f1 -d" "
-REPOSITORY
-namely/seebee
-db-spark
-db-sqlserver
-
-```
-
-Having these images, we may start them all to create the end-to-end demo;
-We will have a See Bee container tracking changes of tables in a SQL Server 
-container and creating Parquet files in spool directories watched by a streaming
-Spark container. 
-
-The plumping needed is:
-
-1. See Bee must be able to access port 1433 of the SQL Server instance
-2. See Bee must have a working directory mounted in its files system
-3. The Spark container must have a sub directory of the See Bee work directory, 
-the spool directory, mounted in its file system.
-
-A script is available that does this:
+For a basic demo of end-to-end communication, try out the following script:
 
 ```commandline
 > ./demo.sh
 ```
 
-Actually, this script will create four containers in total since there are two Spark 
-containers, one for each tracked table.
-
+This script will create four containers in total, showcasing See Bee tracking changes in 
+the SQL Server container and creating Parquet files which are being watched by Spark containers.
+ 
 Having the four containers running, updating the tables of the SQL Server container
 (using a connection to port 1433) will yield printouts in the running Spark container
 logs.
