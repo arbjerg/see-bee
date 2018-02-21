@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -30,11 +31,11 @@ class LazyCrudEventsStreamSupplier implements TableCrudEvents {
 
     private final SqlServerNumberedVersion startVersion;
     private final SqlServerNumberedVersion endVersion;
-    private final Connection connection;
+    private final Supplier<Connection> connectionSupplier;
     private final TrackedTable table;
 
-    LazyCrudEventsStreamSupplier(Connection connection, TrackedTable table, SqlServerNumberedVersion startVersion, SqlServerNumberedVersion endVersion) {
-        this.connection = connection;
+    LazyCrudEventsStreamSupplier(Supplier<Connection> connectionSupplier, TrackedTable table, SqlServerNumberedVersion startVersion, SqlServerNumberedVersion endVersion) {
+        this.connectionSupplier = connectionSupplier;
         this.table = table;
         this.startVersion = startVersion;
         this.endVersion = endVersion;
@@ -53,6 +54,11 @@ class LazyCrudEventsStreamSupplier implements TableCrudEvents {
     @Override
     public String tableName() {
         return table.tableName();
+    }
+
+    @Override
+    public String schemaName() {
+        return table.schemaName();
     }
 
     @Override
@@ -108,7 +114,7 @@ class LazyCrudEventsStreamSupplier implements TableCrudEvents {
             String queryWhere = "WHERE SYS_CHANGE_VERSION <= ? ORDER BY SYS_CHANGE_VERSION";
             String query = querySelect + pkEquals + queryWhere;
             LOGGER.finer(query);
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = connectionSupplier.get().prepareStatement(query);
             statement.setLong(1, startVersion.getVersionNumber());
             statement.setLong(2, endVersion.getVersionNumber());
             return statement.executeQuery();

@@ -20,7 +20,7 @@ public class SqlServerNumberedVersion {
     }
 
     public String dumpToString() {
-        return PREFIX + Long.toString(versionNumber, 16);
+        return PREFIX + String.format("%010x", versionNumber);
     }
 
     public long getVersionNumber() {

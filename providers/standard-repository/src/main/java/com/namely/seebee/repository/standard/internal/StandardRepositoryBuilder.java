@@ -93,7 +93,7 @@ public class StandardRepositoryBuilder implements Repository.Builder {
 
             repository.streamOfTrait(HasInitialize.class)
                     .forEach(c -> {
-                        LOGGER.fine("Initializing " + c.getClass().getSimpleName());
+                        LOGGER.fine(" - Initializing " + c.getClass().getSimpleName());
                         try {
                             c.initialize(repository);
                         } catch (Throwable t) {
@@ -104,7 +104,7 @@ public class StandardRepositoryBuilder implements Repository.Builder {
 
             repository.streamOfTrait(HasResolve.class)
                     .forEach(c -> {
-                        LOGGER.fine("Resolving " + c.getClass().getSimpleName());
+                        LOGGER.fine(" - Resolving " + c.getClass().getSimpleName());
                         try {
                             c.resolve(repository);
                         } catch (Throwable t) {
@@ -115,7 +115,7 @@ public class StandardRepositoryBuilder implements Repository.Builder {
             LOGGER.fine("Starting components");
             repository.streamOfTrait(HasStart.class)
                     .forEach(c -> {
-                        LOGGER.fine("Starting " + c.getClass().getSimpleName());
+                        LOGGER.fine(" - Starting " + c.getClass().getSimpleName());
                         try {
                             c.start(repository);
                         } catch (Throwable t) {

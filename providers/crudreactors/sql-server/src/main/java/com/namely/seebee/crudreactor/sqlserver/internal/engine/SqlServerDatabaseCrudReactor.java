@@ -62,7 +62,6 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor, HasRe
 
     @Override
     public void start(HasConfiguration repo) {
-        LOGGER.fine("Starting reactor");
         listenerComponents = repo.stream(CrudEventListener.class).collect(toList());
         Configuration configuration = repo.getConfiguration(Configuration.class);
         try {
@@ -91,7 +90,7 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor, HasRe
             int pollInterval = configurationState.getPollIntervalMs();
             pollTask = scheduler.scheduleAtFixedRate(this::poll, 0, pollInterval, TimeUnit.MILLISECONDS);
             setState(RUNNING);
-        } catch (SQLException e) {
+        } catch (Throwable e) {
             synchronized (stateMutex) {
                 boolean configuring = CONFIGURING.equals(state);
                 LOGGER.log(configuring ? SEVERE : FINE, "Failed to initialize " + configurationState.connectionUrl(), e);
@@ -103,6 +102,7 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor, HasRe
             if (pollTask == null) {
                 synchronized (stateMutex) {
                     if (CONFIGURING.equals(state)) {
+                        LOGGER.info("Scheduling of polling task failed");
                         setState(FAILED);
                     }
                 }
@@ -204,15 +204,22 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor, HasRe
         private SqlServerNumberedVersion version;
 
         private ListenerEntry(CrudEventListener listener) {
+            LOGGER.log(FINE, "Setting up listener " + listener);
             this.listener = listener;
-            Optional<String> versionString = listener.startVersion();
-            this.version = versionString.map(SqlServerNumberedVersion::fromString).orElseGet(() -> {
-                try {
-                    return SqlServerDatabaseCrudReactor.this.oldestKnownDataVersion();
-                } catch (SQLException e) {
-                    return SqlServerNumberedVersion.ZERO;
-                }
-            });
+            try {
+                version = listener.startVersion().map(SqlServerNumberedVersion::fromString).orElseGet(() -> {
+                    try {
+                        return SqlServerDatabaseCrudReactor.this.oldestKnownDataVersion();
+                    } catch (SQLException e) {
+                        LOGGER.log(WARNING, "Unable to get starting version", e);
+                        return SqlServerNumberedVersion.ZERO;
+                    }
+                });
+                LOGGER.log(FINE, MessageFormat.format("Starting tracking from version {0} for {1}", version.getVersionNumber(), listener));
+            } catch (RuntimeException e) {
+                LOGGER.log(WARNING, "Unable to parse starting version", e);
+                throw e;
+            }
         }
 
         CrudEventListener getListener() {

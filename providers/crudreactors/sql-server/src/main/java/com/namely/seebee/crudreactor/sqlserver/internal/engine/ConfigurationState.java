@@ -1,6 +1,7 @@
 package com.namely.seebee.crudreactor.sqlserver.internal.engine;
 
 import com.namely.seebee.crudreactor.sqlserver.internal.Configuration;
+import com.namely.seebee.crudreactor.sqlserver.internal.PollingStrategy;
 
 import java.sql.*;
 import java.util.NoSuchElementException;
@@ -16,6 +17,7 @@ public class ConfigurationState {
     private final String password;
     private final int schemaReloadingIntervalMs;
     private final int pollIntervalMs;
+    private final PollingStrategy pollingStrategy;
 
     ConfigurationState(Configuration config) throws IllegalSqlServerReactorConfiguration {
         try {
@@ -28,6 +30,7 @@ public class ConfigurationState {
                     ";databaseName=" + config.jdbcDatabasename().get();
             userName = config.jdbcUsername().orElse(null);
             password = config.jdbcPassword().orElse(null);
+            pollingStrategy = config.pollingStrategy();
         } catch (NoSuchElementException e) {
             LOGGER.log(Level.SEVERE, "Config failed", e);
             throw new IllegalSqlServerReactorConfiguration(e);
@@ -40,6 +43,10 @@ public class ConfigurationState {
 
     public int getPollIntervalMs() {
         return pollIntervalMs;
+    }
+
+    PollingStrategy pollingStrategy() {
+        return pollingStrategy;
     }
 
     String connectionUrl() {

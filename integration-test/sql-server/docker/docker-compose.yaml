@@ -1,0 +1,31 @@
+version: '2'
+services:
+
+  sqlserver:
+    build: sqlserver
+
+  seebee:
+    build:
+      context: ../../../applications/sql-server-parquet-application
+      args:
+        JAR_FILE: sql-server-parquet-application-0.0.2-SNAPSHOT-jar-with-dependencies.jar
+    container_name: seebee
+    volumes:
+      - data:/parquet
+    links:
+      - sqlserver
+    depends_on:
+      - sqlserver
+
+  tester:
+    build: tester
+    container_name: tester
+    links:
+      - sqlserver
+    volumes:
+      - data:/parquet
+    depends_on:
+      - seebee
+
+volumes:
+  data:

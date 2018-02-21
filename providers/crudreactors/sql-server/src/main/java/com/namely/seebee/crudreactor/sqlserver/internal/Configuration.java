@@ -13,6 +13,7 @@ public class Configuration {
     private String jdbcDatabasename;
     private String jdbcUsername;
     private String jdbcPassword;
+    private PollingStrategy pollingStrategy = PollingStrategy.SNAPSHOT;
 
     public int schemaReloadIntervalMilliSeconds() {
         return schemaReloadIntervalMillis;
@@ -42,6 +43,10 @@ public class Configuration {
         return Optional.ofNullable(jdbcPassword);
     }
 
+    public PollingStrategy pollingStrategy() {
+        return pollingStrategy;
+    }
+
     public void setSchemaReloadIntervalMillis(int schemaReloadIntervalMillis) {
         this.schemaReloadIntervalMillis = schemaReloadIntervalMillis;
     }
@@ -68,5 +73,9 @@ public class Configuration {
 
     public void setJdbcPassword(String jdbcPassword) {
         this.jdbcPassword = jdbcPassword;
+    }
+
+    public void setPollingStrategy(String strategyName) {
+        PollingStrategy.fromString(strategyName).ifPresent(newStrategy -> pollingStrategy = newStrategy);
     }
 }

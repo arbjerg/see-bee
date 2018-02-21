@@ -6,15 +6,16 @@ services:
      - "1433:1433"
   seebee:
     build:
-      context: applications/sql-server-parquet-application
+      context: ${SEE_BEE_APP_PATH}
       args:
-        JAR_FILE: sql-server-parquet-application-0.0.2-SNAPSHOT-jar-with-dependencies.jar
+        JAR_FILE: ${SEE_BEE_JAR}
     volumes:
      - /tmp/parquet:/parquet
     links:
      - sqlserver
     depends_on:
       - sqlserver
+    command: --system.loggingLevel=FINE
   sparks:
     build: tests/sql-server-test/src/test/resources/spark
     volumes:

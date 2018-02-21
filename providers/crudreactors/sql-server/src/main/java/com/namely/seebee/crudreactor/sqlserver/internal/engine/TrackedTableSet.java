@@ -70,7 +70,7 @@ public class TrackedTableSet {
                 while (columns.next()) {
                     String columnName = columns.getString("COLUMN_NAME");
                     SqlServerColumnMetadata metaData = new SqlServerColumnMetadata(
-                            schemaName, tableName, columnName, columns
+                            columnName, columns
                     );
                     builder.withColumn(columnName, typeMapper.createFactory(metaData), metaData);
                 }

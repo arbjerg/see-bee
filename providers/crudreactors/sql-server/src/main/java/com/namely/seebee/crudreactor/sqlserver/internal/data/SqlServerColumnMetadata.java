@@ -9,8 +9,6 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class SqlServerColumnMetadata implements ColumnMetaData {
-    private final String schema;
-    private final String tableName;
     private final String name;
     private final int dataType;
     private final String typeName;
@@ -18,9 +16,7 @@ public class SqlServerColumnMetadata implements ColumnMetaData {
     private final Boolean nullable;
     private final int decimalDigits;
 
-    public SqlServerColumnMetadata(String schema, String tableName, String name, ResultSet columns) throws SQLException {
-        this.schema = requireNonNull(schema);
-        this.tableName = requireNonNull(tableName);
+    public SqlServerColumnMetadata(String name, ResultSet columns) throws SQLException {
         this.name = requireNonNull(name);
 
         dataType = columns.getInt("DATA_TYPE");
@@ -38,17 +34,6 @@ public class SqlServerColumnMetadata implements ColumnMetaData {
             default:
                 nullable = null;
         }
-    }
-
-
-    @Override
-    public String tableSchem() {
-        return schema;
-    }
-
-    @Override
-    public String tableName() {
-        return tableName;
     }
 
     @Override
@@ -79,5 +64,17 @@ public class SqlServerColumnMetadata implements ColumnMetaData {
     @Override
     public int decimalDigits() {
         return decimalDigits;
+    }
+
+    @Override
+    public String toString() {
+        return "SqlServerColumnMetadata{" +
+                "name='" + name + '\'' +
+                ", dataType=" + dataType +
+                ", typeName='" + typeName + '\'' +
+                ", size=" + size +
+                ", nullable=" + nullable +
+                ", decimalDigits=" + decimalDigits +
+                '}';
     }
 }
