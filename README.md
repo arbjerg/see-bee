@@ -35,7 +35,7 @@ parquet:
 sqlserver-reactor:
   jdbcHostName: sqlserver
   jdbcPort: 1433
-  jdbcDatabasename: speedment
+  jdbcDatabasename: seebee
   jdbcUsername: sa
   jdbcPassword: Password1
   changesPollIntervalMillis: 1000

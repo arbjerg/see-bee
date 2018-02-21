@@ -1,9 +1,4 @@
 #!/bin/bash
-#
-#
-# Copyright (c) 2006-2017, Speedment, Inc. All Rights Reserved.
-#
-
 
 # Intended for reuse by other database setups, configured by DB specific dbclient_settings.sh
 

@@ -1,23 +1,17 @@
---
---
--- Copyright (c) 2006-2017, Speedment, Inc. All Rights Reserved.
---
+CREATE DATABASE seebee collate sql_latin1_general_cp1_cs_as;
 
-
-CREATE DATABASE speedment collate sql_latin1_general_cp1_cs_as;
-
-ALTER DATABASE speedment
+ALTER DATABASE seebee
 SET CHANGE_TRACKING = ON
 (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON)
 
 go
 
-ALTER DATABASE speedment
+ALTER DATABASE seebee
 SET ALLOW_SNAPSHOT_ISOLATION ON
 
 go
 
-USE speedment;
+USE seebee;
 
 
 CREATE TABLE USERS(

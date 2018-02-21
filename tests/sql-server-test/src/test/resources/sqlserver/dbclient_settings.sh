@@ -1,8 +1,3 @@
-#
-#
-# Copyright (c) 2006-2017, Speedment, Inc. All Rights Reserved.
-#
-
 # Settings specific for this DB
 
 # Binary of the SQL client in the docker container

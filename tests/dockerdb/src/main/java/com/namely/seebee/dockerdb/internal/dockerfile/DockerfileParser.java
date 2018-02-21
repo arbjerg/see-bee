@@ -1,7 +1,3 @@
-/**
- *
- * Copyright (c) 2006-2017, Speedment, Inc. All Rights Reserved.
- */
 package com.namely.seebee.dockerdb.internal.dockerfile;
 
 import java.io.BufferedReader;

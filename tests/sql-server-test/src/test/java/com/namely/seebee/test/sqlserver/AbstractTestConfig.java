@@ -24,7 +24,7 @@ public abstract class AbstractTestConfig extends Configuration {
 
     @Override
     public Optional<String> jdbcDatabasename() {
-        return Optional.of("speedment");
+        return Optional.of("seebee");
     }
 
     @Override

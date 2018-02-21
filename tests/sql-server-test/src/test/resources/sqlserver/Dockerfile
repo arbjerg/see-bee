@@ -1,8 +1,3 @@
-#
-#
-# Copyright (c) 2006-2017, Speedment, Inc. All Rights Reserved.
-#
-
 FROM microsoft/mssql-server-linux:2017-GA
 
 LABEL dockerdb.port=1433

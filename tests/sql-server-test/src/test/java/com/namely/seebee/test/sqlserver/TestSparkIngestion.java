@@ -28,7 +28,7 @@ public class TestSparkIngestion {
         SeeBeeLogging.setSeeBeeLoggingLevel(Level.WARNING);
     }
 
-    private static final String DB_NAME = "speedment";
+    private static final String DB_NAME = "seebee";
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "Password1";
     private static final String SQL_SERVER_URL_SCHEME = "jdbc:sqlserver";
