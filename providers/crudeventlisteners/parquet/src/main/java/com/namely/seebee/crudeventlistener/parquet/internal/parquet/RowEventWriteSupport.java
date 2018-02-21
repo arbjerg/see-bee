@@ -1,5 +1,6 @@
 package com.namely.seebee.crudeventlistener.parquet.internal.parquet;
 
+import com.namely.seebee.crudeventlistener.parquet.internal.ParquetFileCrudEventListener;
 import com.namely.seebee.crudreactor.CrudEventType;
 import com.namely.seebee.crudreactor.HasTableMetadata;
 import com.namely.seebee.crudreactor.RowEvent;
@@ -13,65 +14,74 @@ import org.apache.parquet.schema.MessageType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RowEventWriteSupport extends WriteSupport<RowEvent> {
+    private static final Logger LOGGER = Logger.getLogger(ParquetFileCrudEventListener.class.getName());
+
     private static final String ROW_COUNT = "ROW_COUNT";
     private final String operationTypeColumnName;
     private final String operationIsDeleteColumnName;
     private final Map<String, String> metadata;
 
-
+    private final MessageType messageType;
+    private final ParquetSchema parquetSchema;
     private long rowCount;
-    private final MessageType schema;
-    private final ParquetRow parquetRow;
 
     RowEventWriteSupport(HasTableMetadata databaseRows,
                          ParquetWriterConfiguration config,
                          Map<String, String> extraMetadata) {
-        this.operationTypeColumnName = config.getOperationTypeColumnName();
-        this.operationIsDeleteColumnName = config.getOperationIsDeleteColumnName();
+        operationTypeColumnName = config.getOperationTypeColumnName();
+        operationIsDeleteColumnName = config.getOperationIsDeleteColumnName();
         metadata = createMetadata(extraMetadata);
-        parquetRow = createParquetRow(databaseRows);
-        schema = parquetRow.createSchema(databaseRows.tableName());
+        parquetSchema = createSchema(databaseRows);
+        messageType = parquetSchema.createMessageType(databaseRows.tableName());
+        LOGGER.log(Level.FINE, ()-> {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Schema used: ");
+            messageType.writeToStringBuilder(builder,"");
+            return builder.toString();
+        });
     }
 
-    private ParquetRow createParquetRow(HasTableMetadata rows) {
-        ParquetRow.Builder builder = ParquetRow.builder();
+    private ParquetSchema createSchema(HasTableMetadata rows) {
+        ParquetSchema.Builder builder = ParquetSchema.builder();
         rows.columnMetadatas().stream()
                 .map(ParquetField::of)
                 .forEach(builder::with);
         if (operationIsDeleteColumnName != null) {
-            builder.with(ParquetField.of(operationIsDeleteColumnName, true, Boolean.class, 1, 0));
+            builder.with(ParquetField.of(operationIsDeleteColumnName, true, Boolean.class));
         }
         if (operationTypeColumnName != null) {
-            builder.with(ParquetField.of(operationTypeColumnName, true, Enum.class, CrudEventType.maxNameLength(), 0));
+            builder.with(ParquetField.of(operationTypeColumnName, true, Enum.class));
         }
         return builder.build();
     }
 
     @Override
     public void prepareForWrite(RecordConsumer consumer) {
-        parquetRow.setConsumer(consumer);
+        parquetSchema.setConsumer(consumer);
     }
 
     @Override
     public WriteContext init(Configuration configuration) {
-        return new WriteContext(schema, metadata);
+        return new WriteContext(messageType, metadata);
     }
 
     @Override
-    public void write(RowEvent row) {
-        List<ColumnValue<?>> columns = row.data().columns();
-        ParquetRow.MessageBuilder message = parquetRow.newMessage();
-        columns.forEach(v -> message.add(v != null ? v.get() : null));
-        if (operationIsDeleteColumnName != null) {
-            message.add(CrudEventType.REMOVE == row.type());
-        }
-        if (operationTypeColumnName != null) {
-            message.add(Binary.fromString(row.type().name()));
-        }
-        synchronized (this) {  // Probably not needed, but we prefer not to rely on the ParquetWriter to serialize invocations
-            message.flush();
+    public void write(RowEvent dataRow) {
+        List<ColumnValue<?>> columns = dataRow.data().columns();
+        try (ParquetSchema.RowWriter row = parquetSchema.startRow()) {
+            columns.forEach(v -> row.addValue(v != null ? v.get() : null));
+            if (operationIsDeleteColumnName != null) {
+                row.addValue(CrudEventType.REMOVE == dataRow.type());
+            }
+            if (operationTypeColumnName != null) {
+                row.addValue(Binary.fromString(dataRow.type().name()));
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Got a row event with " + dataRow.data().columns().size() + " columns, metadata has " + parquetSchema.createMessageType("").getFieldCount());
         }
         rowCount++;
     }

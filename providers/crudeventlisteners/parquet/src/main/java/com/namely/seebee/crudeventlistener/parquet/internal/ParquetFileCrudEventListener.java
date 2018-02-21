@@ -44,6 +44,9 @@ public class ParquetFileCrudEventListener implements CrudEventListener, HasResol
     @Override
     public Optional<String> startVersion() {
         synchronized (stateFileMutex) {
+            if (stateFile == null) {
+                throw new IllegalStateException("This listener is not yet resolved.");
+            }
             if (stateFile.exists()) {
                 try {
                     return Files.lines(stateFile.toPath()).findFirst();
@@ -121,5 +124,12 @@ public class ParquetFileCrudEventListener implements CrudEventListener, HasResol
     @Override
     public void close() {
         executorService.shutdown();
+    }
+
+    @Override
+    public String toString() {
+        return "ParquetFileCrudEventListener{" +
+                config.getSpoolDirectory().getAbsolutePath() +
+                '}';
     }
 }

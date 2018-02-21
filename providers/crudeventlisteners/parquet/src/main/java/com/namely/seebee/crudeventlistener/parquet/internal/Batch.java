@@ -96,10 +96,10 @@ class Batch {
 
 
     private void write(TableCrudEvents tableEvents, long timeoutMs) throws FileWrintingException {
-        String tableName = tableEvents.tableName();
-        String fileName = MessageFormat.format("{0}.{1}", tableName, fileSuffix);
+        String qualifiedName = tableEvents.qualifiedName();
+        String fileName = MessageFormat.format("{0}.{1}", qualifiedName, fileSuffix);
         File workFile = new File(workDirectory, fileName);
-        File spoolFile = new File(new File(spoolDirectory, tableName), fileName);
+        File spoolFile = new File(new File(spoolDirectory, qualifiedName), fileName);
         synchronized (workFiles) {
             workFiles.add(new WorkFile(workFile, spoolFile));
         }
@@ -113,13 +113,12 @@ class Batch {
                 throw new IOException("Work file already exists: " + workFile.getAbsolutePath());
             }
             writer = new ParquetFileWriter(workFile, tableEvents, config, metadata);
-
         }  catch (Throwable t) {
             LOGGER.log(Level.WARNING, t, () -> MessageFormat.format("Failed to create output writer for {0}", workFile.getAbsolutePath()));
             throw new FileWrintingException(t);
         }
         try {
-            LOGGER.finer(() -> MessageFormat.format("writing {0} to {1}", tableName, workFile));
+            LOGGER.finer(() -> MessageFormat.format("writing {0} to {1}", qualifiedName, workFile));
             writer.write(timeoutMs);
             LOGGER.finer(() -> MessageFormat.format("written {0}", workFile));
         } catch (Throwable t) {

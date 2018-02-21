@@ -22,11 +22,6 @@ public class IntegerColumnValue implements ColumnValue<Integer> {
     }
 
     @Override
-    public boolean isNull() {
-        return value != null;
-    }
-
-    @Override
     public Class<Integer> javaType() {
         return Integer.class;
     }

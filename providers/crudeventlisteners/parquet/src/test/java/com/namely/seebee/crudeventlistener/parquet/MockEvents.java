@@ -38,6 +38,11 @@ public class MockEvents implements CrudEvents {
             }
 
             @Override
+            public String schemaName() {
+                return "S";
+            }
+
+            @Override
             public String tableName() {
                 return "TN";
             }
@@ -64,16 +69,6 @@ public class MockEvents implements CrudEvents {
             @Override
             public ColumnMetaData metaData() {
                 return new ColumnMetaData() {
-                    @Override
-                    public String tableSchem() {
-                        return null;
-                    }
-
-                    @Override
-                    public String tableName() {
-                        return null;
-                    }
-
                     @Override
                     public String columnName() {
                         return null;

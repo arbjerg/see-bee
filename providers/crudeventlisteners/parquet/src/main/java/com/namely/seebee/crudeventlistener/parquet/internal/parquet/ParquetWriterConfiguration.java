@@ -71,6 +71,9 @@ public class ParquetWriterConfiguration {
             throw new ConfigurationException("parquet writer " + usage + " directory needed");
         }
         File directory = new File(dirName);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
         if (!directory.isDirectory()) {
             throw new ConfigurationException(MessageFormat.format("Configured {0} directory {1} is not a directory",
                     usage, directory.getAbsolutePath()));
