@@ -23,7 +23,7 @@ while True:
         schema = spark.read.load(spool).schema
         df = spark.readStream.schema(schema).load(spool)
         df.writeStream.format("console").start()
-        time.sleep(1000000)  # Just wait here while the stream continues
+        while True:
+            time.sleep(1)  # Just wait here while the stream continues
     except AnalysisException:
-        print "No spooled files yet. Sleeping for 10s..."
-        time.sleep(10)
+        time.sleep(0.5)

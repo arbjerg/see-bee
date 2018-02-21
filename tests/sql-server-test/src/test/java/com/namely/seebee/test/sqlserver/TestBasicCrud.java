@@ -302,7 +302,7 @@ final class TestBasicCrud {
                             event.data().columns().stream()
                                     .filter(c -> "id".equals(c.name()))
                                     .limit(1)
-                                    .forEach(columnValue -> deleted[(int) columnValue.get()] = true);
+                                    .forEach(columnValue -> deleted[(Integer) columnValue.get()] = true);
                         }
                     });
 
