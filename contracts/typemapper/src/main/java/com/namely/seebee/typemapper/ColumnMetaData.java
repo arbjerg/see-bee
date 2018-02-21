@@ -23,11 +23,6 @@ import java.util.Optional;
  * @author Dan Lawesson
  */
 public interface ColumnMetaData {
-
-    String tableSchem();
-
-    String tableName();
-
     String columnName();
 
     int dataType();
@@ -36,7 +31,7 @@ public interface ColumnMetaData {
 
     int columnSize();
 
-    Optional<Boolean> nullable();
-
     int decimalDigits();
+
+    Optional<Boolean> nullable();
 }

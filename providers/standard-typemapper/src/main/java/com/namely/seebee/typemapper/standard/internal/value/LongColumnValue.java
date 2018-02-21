@@ -18,24 +18,26 @@ package com.namely.seebee.typemapper.standard.internal.value;
 
 import com.namely.seebee.typemapper.ColumnValue;
 import com.namely.seebee.typemapper.TypeMapperException;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import static java.util.Objects.requireNonNull;
 
 /**
  *
- * @author Per Minborg
+ * @author Dan Lawesson
  */
-public class IntColumnValue extends AbstractNamedColumnValue implements ColumnValue<Integer> {
+public class LongColumnValue extends AbstractNamedColumnValue implements ColumnValue<Long> {
 
-    private final Integer value;
+    private final Long value;
 
-    public IntColumnValue(ResultSet resultSet, String columnName, boolean nullable) {
+    public LongColumnValue(ResultSet resultSet, String columnName, boolean nullable) {
         super(columnName, nullable);
         requireNonNull(resultSet);
         requireNonNull(columnName);
         try {
-            this.value = resultSet.getInt(columnName);
+            this.value = resultSet.getLong(columnName);
             if (resultSet.wasNull() && !nullable) {
                 throw new TypeMapperException("Non-nullable column was null, Unable to read column  " + columnName);
             }
@@ -45,12 +47,12 @@ public class IntColumnValue extends AbstractNamedColumnValue implements ColumnVa
     }
 
     @Override
-    public Class<Integer> javaType() {
-        return nullable() ? Integer.class : int.class;
+    public Class<Long> javaType() {
+        return nullable() ? Long.class : long.class;
     }
 
     @Override
-    public Integer get() {
+    public Long get() {
         return value;
     }
 }

@@ -19,32 +19,35 @@ package com.namely.seebee.typemapper.standard.internal.factory;
 import com.namely.seebee.typemapper.ColumnMetaData;
 import com.namely.seebee.typemapper.ColumnValue;
 import com.namely.seebee.typemapper.ColumnValueFactory;
-import com.namely.seebee.typemapper.standard.internal.value.IntColumnValue;
+import com.namely.seebee.typemapper.standard.internal.value.StringColumnValue;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import static java.util.Objects.requireNonNull;
 
 /**
  *
  * @author Dan Lawesson
  */
-public class IntColumnValueFactory implements ColumnValueFactory<Integer> {
+public class StringColumnValueFactory implements ColumnValueFactory<String> {
 
     private final String columnName;
     private final boolean nullable;
 
-    public IntColumnValueFactory(ColumnMetaData metaData) {
-        this.columnName = requireNonNull(metaData).columnName();
-        this.nullable = metaData.nullable().orElse(true);
+    public StringColumnValueFactory(ColumnMetaData metaData) {
+        columnName = requireNonNull(metaData).columnName();
+        nullable = metaData.nullable().orElse(true);
     }
 
     @Override
-    public ColumnValue<Integer> createFrom(ResultSet resultSet) throws SQLException {
-        return new IntColumnValue(resultSet, columnName, nullable);
+    public ColumnValue<String> createFrom(ResultSet resultSet) throws SQLException {
+        return new StringColumnValue(resultSet, columnName, nullable);
     }
 
     @Override
-    public Class<Integer> javaType() {
-        return nullable ? Integer.class : int.class;
+    public Class<String> javaType() {
+        return String.class;
     }
+
 }

@@ -41,12 +41,4 @@ public interface ColumnValue<E> extends Supplier<E>, HasJavaType<E> {
      */
     @Override
     E get();
-
-    /**
-     * Returns if the container value is null.
-     *
-     * @return if the container value is null
-     */
-    boolean isNull();
-
 }

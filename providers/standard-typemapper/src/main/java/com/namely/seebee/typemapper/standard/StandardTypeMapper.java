@@ -16,43 +16,106 @@
  */
 package com.namely.seebee.typemapper.standard;
 
-import com.namely.seebee.typemapper.ColumnMetaData;
-import com.namely.seebee.typemapper.ColumnValueFactory;
-import com.namely.seebee.typemapper.TypeMapper;
-import com.namely.seebee.typemapper.TypeMapperException;
-import com.namely.seebee.typemapper.standard.internal.factory.IntColumnValueFactory;
-import com.namely.seebee.typemapper.standard.internal.factory.VarcharColumnValueFactory;
+import com.namely.seebee.typemapper.*;
 
-import java.sql.Types;
+import java.math.BigDecimal;
+import java.sql.*;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  *
- * @author Per Minborg
+ * @author Dan Lawesson
  */
 public class StandardTypeMapper implements TypeMapper {
 
+    interface ResultSetInterpreter<T> {
+        T get(ResultSet rs, String columnName) throws SQLException;
+    }
+
+    static private final Map<Integer, Function<ColumnMetaData, ColumnValueFactory<?>>> FACTORIES = new HashMap<>();
+    static {
+        Function<ColumnMetaData, ColumnValueFactory<?>> shortMapper = metadata -> createFactory(metadata, Short.class, short.class, ResultSet::getShort);
+        Function<ColumnMetaData, ColumnValueFactory<?>> bigDecimalMapper = metadata -> createFactory(metadata, BigDecimal.class, ResultSet::getBigDecimal);
+        Function<ColumnMetaData, ColumnValueFactory<?>> binaryMapper = metadata -> createFactory(metadata, byte[].class, ResultSet::getBytes);
+        Function<ColumnMetaData, ColumnValueFactory<?>> stringMapper = metadata -> createFactory(metadata, String.class, ResultSet::getString);
+
+        FACTORIES.put(Types.VARCHAR, stringMapper);
+        FACTORIES.put(Types.CHAR, stringMapper);
+        FACTORIES.put(Types.NVARCHAR, stringMapper);
+        FACTORIES.put(Types.LONGVARCHAR, stringMapper);
+        FACTORIES.put(Types.LONGNVARCHAR, stringMapper);
+        FACTORIES.put(Types.BIT, metadata -> createFactory(metadata, Boolean.class, boolean.class, ResultSet::getBoolean));
+        FACTORIES.put(Types.INTEGER, metadata -> createFactory(metadata, Integer.class, int.class, ResultSet::getInt));
+        FACTORIES.put(Types.BIGINT, metadata -> createFactory(metadata, Long.class, long.class, ResultSet::getLong));
+        FACTORIES.put(Types.REAL, metadata -> createFactory(metadata, Float.class, float.class, ResultSet::getFloat));
+        FACTORIES.put(Types.DOUBLE, metadata -> createFactory(metadata, Double.class, double.class, ResultSet::getDouble));
+        FACTORIES.put(Types.DATE, metadata1 -> createFactory(metadata1, Date.class, ResultSet::getDate));
+        FACTORIES.put(Types.TIMESTAMP, metadata -> createFactory(metadata, Timestamp.class, ResultSet::getTimestamp));
+        FACTORIES.put(Types.BINARY, binaryMapper);
+        FACTORIES.put(Types.LONGVARBINARY, binaryMapper);
+        FACTORIES.put(Types.VARBINARY, binaryMapper);
+        FACTORIES.put(Types.DECIMAL, bigDecimalMapper);
+        FACTORIES.put(Types.NUMERIC, bigDecimalMapper);
+        FACTORIES.put(Types.SMALLINT, shortMapper);
+        FACTORIES.put(Types.TINYINT, metadata -> createFactory(metadata, Byte.class, byte.class, ResultSet::getByte));
+    }
+
     @Override
     public ColumnValueFactory<?> createFactory(ColumnMetaData columnMetaData) {
-        switch (columnMetaData.dataType()) {
-            case Types.INTEGER:
-                return new IntColumnValueFactory(columnMetaData);
-            case Types.VARCHAR:
-            case Types.NVARCHAR:
-                return new VarcharColumnValueFactory(columnMetaData);
+        Function<ColumnMetaData, ColumnValueFactory<?>> factory = FACTORIES.get(columnMetaData.dataType());
+        if (factory != null) {
+            return factory.apply(columnMetaData);
         }
         throw new TypeMapperException(MessageFormat.format("column meta data cannot be mapped to a factory: {0} {1}",
                 columnMetaData.typeName(),
                 columnMetaData.dataType()));
     }
 
-    @Override
-    public <E> ColumnValueFactory<E> createFactory(Class<E> type, ColumnMetaData columnMetaData) {
-        final ColumnValueFactory<?> factory = createFactory(columnMetaData);
-        if (!type.equals(factory.getClass())) {
 
-        }
-        return (ColumnValueFactory<E>) factory;
+    private static <T> ColumnValueFactory<T> createFactory(ColumnMetaData metadata,
+                                                           Class<T> javaClass,
+                                                           Class<T> nonNulClass,
+                                                           ResultSetInterpreter<T> resultSetInterpreter) {
+        return createFactory(metadata.columnName(), metadata.nullable().orElse(true) ? javaClass : nonNulClass, resultSetInterpreter);
     }
 
+    private static <T> ColumnValueFactory<T> createFactory(ColumnMetaData metadata,
+                                                           Class<T> javaClass,
+                                                           ResultSetInterpreter<T> resultSetInterpreter) {
+        return createFactory(metadata.columnName(), javaClass, resultSetInterpreter);
+    }
+
+
+    private static <T> ColumnValueFactory<T> createFactory(String columnName, Class<T> javaClass, ResultSetInterpreter<T> resultSetInterpreter) {
+        return new ColumnValueFactory<T>() {
+            @Override
+            public ColumnValue<T> createFrom(ResultSet resultSet) throws SQLException {
+                T value = resultSetInterpreter.get(resultSet, columnName);
+                return new ColumnValue<>() {
+                    @Override
+                    public String name() {
+                        return columnName;
+                    }
+
+                    @Override
+                    public T get() {
+                        return value;
+                    }
+
+                    @Override
+                    public Class<T> javaType() {
+                        return javaClass;
+                    }
+                };
+            }
+
+            @Override
+            public Class<T> javaType() {
+                return javaClass;
+            }
+        };
+    }
 }

@@ -19,7 +19,7 @@ package com.namely.seebee.typemapper.standard.internal.factory;
 import com.namely.seebee.typemapper.ColumnMetaData;
 import com.namely.seebee.typemapper.ColumnValue;
 import com.namely.seebee.typemapper.ColumnValueFactory;
-import com.namely.seebee.typemapper.standard.internal.value.StringColumnValue;
+import com.namely.seebee.typemapper.standard.internal.value.LongColumnValue;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,24 +28,26 @@ import static java.util.Objects.requireNonNull;
 
 /**
  *
- * @author Dan Lawesson
+ * @author Per Minborg
  */
-public class VarcharColumnValueFactory implements ColumnValueFactory<String> {
+public class LongColumnValueFactory implements ColumnValueFactory<Long> {
 
     private final String columnName;
+    private final Boolean nullable;
 
-    public VarcharColumnValueFactory(ColumnMetaData metaData) {
-        this.columnName = requireNonNull(metaData).columnName();
+    public LongColumnValueFactory(ColumnMetaData metaData) {
+        columnName = requireNonNull(metaData).columnName();
+        nullable = metaData.nullable().orElse(true);
     }
 
     @Override
-    public ColumnValue<String> createFrom(ResultSet resultSet) throws SQLException {
-        return new StringColumnValue(resultSet, columnName);
+    public ColumnValue<Long> createFrom(ResultSet resultSet) throws SQLException {
+        return new LongColumnValue(resultSet, columnName, nullable);
     }
 
     @Override
-    public Class<String> javaType() {
-        return String.class;
+    public Class<Long> javaType() {
+        return Long.class;
     }
 
 }

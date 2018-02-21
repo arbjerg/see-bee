@@ -30,8 +30,8 @@ public class StringColumnValue extends AbstractNamedColumnValue implements Colum
 
     private final String value;
 
-    public StringColumnValue(ResultSet resultSet, String columnName) {
-        super(columnName);
+    public StringColumnValue(ResultSet resultSet, String columnName, boolean nullable) {
+        super(columnName, nullable);
 
         requireNonNull(resultSet);
         requireNonNull(columnName);
@@ -51,10 +51,4 @@ public class StringColumnValue extends AbstractNamedColumnValue implements Colum
     public String get() {
         return value;
     }
-
-    @Override
-    public boolean isNull() {
-        return value == null;
-    }
-
 }
