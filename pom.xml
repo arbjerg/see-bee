@@ -36,7 +36,6 @@
         <module>contracts</module>
         <module>providers</module>
         <module>applications</module>
-        <module>tests</module>
     </modules>
 
     <organization>
