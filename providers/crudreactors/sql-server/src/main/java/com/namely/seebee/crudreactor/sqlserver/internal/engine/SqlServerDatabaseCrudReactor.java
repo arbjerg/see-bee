@@ -86,9 +86,9 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor, HasRe
             reloadTrackedTables();
             LOGGER.info(() -> MessageFormat.format("Tracking tables {0}", tables.tables().stream().map(Object::toString).collect(joining(", "))));
             int reloadInterval = configurationState.schemaReloadingIntervalMs();
-            reloadTask = scheduler.scheduleAtFixedRate(this::tryReloadTrackedTables, reloadInterval, reloadInterval, TimeUnit.MILLISECONDS);
+            reloadTask = scheduler.scheduleWithFixedDelay(this::tryReloadTrackedTables, reloadInterval, reloadInterval, TimeUnit.MILLISECONDS);
             int pollInterval = configurationState.getPollIntervalMs();
-            pollTask = scheduler.scheduleAtFixedRate(this::poll, 0, pollInterval, TimeUnit.MILLISECONDS);
+            pollTask = scheduler.scheduleWithFixedDelay(this::poll, 0, pollInterval, TimeUnit.MILLISECONDS);
             setState(RUNNING);
         } catch (Throwable e) {
             synchronized (stateMutex) {
@@ -161,7 +161,7 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor, HasRe
                 if (lastVersion != currentVersion) {
                     try {
                         LazyCrudEvents eventSet = getChangesSince(lastVersion);
-                        listenerEntry.getListener().newEvents(eventSet);
+                        listenerEntry.listener().newEvents(eventSet);
                         listenerEntry.setVersion(eventSet.endVersion());
                     } catch (SQLException e) {
                         if (state == RUNNING) {
@@ -207,23 +207,27 @@ public class SqlServerDatabaseCrudReactor implements SqlServerCrudReactor, HasRe
             LOGGER.log(FINE, "Setting up listener " + listener);
             this.listener = listener;
             try {
-                version = listener.startVersion().map(SqlServerNumberedVersion::fromString).orElseGet(() -> {
-                    try {
-                        return SqlServerDatabaseCrudReactor.this.oldestKnownDataVersion();
-                    } catch (SQLException e) {
-                        LOGGER.log(WARNING, "Unable to get starting version", e);
-                        return SqlServerNumberedVersion.ZERO;
-                    }
-                });
-                LOGGER.log(FINE, MessageFormat.format("Starting tracking from version {0} for {1}", version.getVersionNumber(), listener));
+                restart();
             } catch (RuntimeException e) {
                 LOGGER.log(WARNING, "Unable to parse starting version", e);
                 throw e;
             }
         }
 
-        CrudEventListener getListener() {
+        CrudEventListener listener() {
             return listener;
+        }
+
+        void restart() {
+            version = listener.startVersion(this::restart).map(SqlServerNumberedVersion::fromString).orElseGet(() -> {
+                try {
+                    return SqlServerDatabaseCrudReactor.this.oldestKnownDataVersion();
+                } catch (SQLException e) {
+                    LOGGER.log(WARNING, "Unable to get starting version", e);
+                    return SqlServerNumberedVersion.ZERO;
+                }
+            });
+            LOGGER.log(FINE, MessageFormat.format("Starting tracking from version {0} for {1}", version.getVersionNumber(), listener));
         }
 
         SqlServerNumberedVersion getVersion() {

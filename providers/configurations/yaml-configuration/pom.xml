@@ -53,7 +53,7 @@
         <dependency>
             <groupId>com.namely.seebee</groupId>
             <artifactId>standard-repository</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>               

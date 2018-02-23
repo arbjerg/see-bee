@@ -16,10 +16,11 @@ public interface CrudEventListener extends AutoCloseable {
      * CrudEvents. If restarted, that version can be used to resume tracking from a known state.
      *
      * @see CrudEvents#endVersion()
-     *
+     * @param restartCallback a callback to be used when a restart is needed. Calling this will trigger a
+     *                        callback to startVersion to find a new starting point
      * @return the version determining where to start tracking changes
      */
-    Optional<String> startVersion();
+    Optional<String> startVersion(Runnable restartCallback);
 
     /**
      * Consume a new set of database CRUD events.

@@ -25,14 +25,16 @@ public class ParquetFileCrudEventListener implements CrudEventListener, HasResol
 
     private final ExecutorService executorService;
     private final Deque<Batch> unfinished;
-
+    private Batch ongoingBatch;
     private final Object stateFileMutex = new Object();
     private File stateFile;
     private ParquetWriterConfiguration config;
+    private Runnable restarter;
 
     public ParquetFileCrudEventListener() {
         executorService = Executors.newCachedThreadPool();
         unfinished = new LinkedList<>();
+        ongoingBatch = null;
     }
 
     @Override
@@ -42,7 +44,8 @@ public class ParquetFileCrudEventListener implements CrudEventListener, HasResol
     }
 
     @Override
-    public Optional<String> startVersion() {
+    public Optional<String> startVersion(Runnable restarter) {
+        this.restarter = restarter;
         synchronized (stateFileMutex) {
             if (stateFile == null) {
                 throw new IllegalStateException("This listener is not yet resolved.");
@@ -78,7 +81,14 @@ public class ParquetFileCrudEventListener implements CrudEventListener, HasResol
         LOGGER.fine(() -> "Got new events: " + batch);
         synchronized (unfinished) {
             unfinished.addLast(batch);
-            batch.writeAsync(config.getWriteTimeoutMs()).whenComplete(this::batchDone);
+            if (config.writeInOrder()) {
+                if (ongoingBatch == null) {
+                    ongoingBatch = batch;
+                    ongoingBatch.writeAsync(config.getWriteTimeoutMs()).whenComplete(this::batchDone);
+                }
+            } else {
+                batch.writeAsync(config.getWriteTimeoutMs()).whenComplete(this::batchDone);
+            }
         }
     }
 
@@ -93,8 +103,28 @@ public class ParquetFileCrudEventListener implements CrudEventListener, HasResol
                 Batch finished = unfinished.removeFirst();
                 if (finished.isSpooled()) {
                     advanceToVersion(finished.version());
+                } else {
+                    failed(finished);
                 }
             }
+            if (config.writeInOrder()) {
+                assert batch == ongoingBatch;
+                if (unfinished.isEmpty()) {
+                    ongoingBatch = null;
+                } else {
+                    ongoingBatch = unfinished.peekFirst();
+                    ongoingBatch.writeAsync(config.getWriteTimeoutMs()).whenComplete(this::batchDone);
+                }
+            }
+        }
+    }
+
+    private void failed(Batch finished) {
+        LOGGER.fine("Restarting after failure to spool " + finished);
+        if (restarter != null) {
+            executorService.submit(restarter);
+        } else {
+            LOGGER.severe("Failed batch but no restarter to call");
         }
     }
 
