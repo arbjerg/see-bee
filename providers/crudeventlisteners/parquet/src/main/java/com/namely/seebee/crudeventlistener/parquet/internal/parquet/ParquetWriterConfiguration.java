@@ -14,11 +14,13 @@ public class ParquetWriterConfiguration {
     private String spoolDirectory;
     private long writeTimeoutMs = 10 * 60 * 1000; // 10 minutes for now...
     private String operationTypeColumnName = null;
-    private String operationIsDeleteColumnName = "seebeeIsRemove";
+    private String operationIsDeleteColumnName = "CB_REMOVED";
     private File workDirectoryFile;
     private File spoolDirectoryFile;
     private CompressionCodecName compressionCodec = CompressionCodecName.UNCOMPRESSED;
     private Boolean dictionaryEncodingEnabled = true;
+    private boolean mirrorDbSchema = true;
+    private boolean writeInOrder = true;
 
     public void setWorkDirectory(String workDirectory) {
         this.workDirectory = workDirectory;
@@ -95,5 +97,21 @@ public class ParquetWriterConfiguration {
 
     public Optional<Boolean> getDictionaryEncoding() {
         return Optional.ofNullable(dictionaryEncodingEnabled);
+    }
+
+    public boolean isMirrorDbSchema() {
+        return mirrorDbSchema;
+    }
+
+    public void setMirrorDbSchema(boolean mirrorDbSchema) {
+        this.mirrorDbSchema = mirrorDbSchema;
+    }
+
+    public boolean writeInOrder() {
+        return writeInOrder;
+    }
+
+    public void setWriteInOrder(boolean writeInOrder) {
+        this.writeInOrder = writeInOrder;
     }
 }

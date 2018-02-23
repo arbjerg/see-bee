@@ -80,9 +80,13 @@ class Batch {
             LOGGER.log(Level.WARNING, throwable, () -> "Failed to write some work file");
             workFiles.forEach(WorkFile::remove);
         } else {
-            workFiles.forEach(WorkFile::spool);
-            spooled = true;
-            LOGGER.finer("Spooled");
+            try {
+                workFiles.forEach(WorkFile::spool);
+                spooled = true;
+                LOGGER.finer("Spooled");
+            } catch (FileWritingException e) {
+                done(e);
+            }
         }
     }
 
@@ -95,7 +99,7 @@ class Batch {
     }
 
 
-    private void write(TableCrudEvents tableEvents, long timeoutMs) throws FileWrintingException {
+    private void write(TableCrudEvents tableEvents, long timeoutMs) throws FileWritingException {
         String qualifiedName = tableEvents.qualifiedName();
         String fileName = MessageFormat.format("{0}.{1}", qualifiedName, fileSuffix);
         File workFile = new File(workDirectory, fileName);
@@ -115,7 +119,7 @@ class Batch {
             writer = new ParquetFileWriter(workFile, tableEvents, config, metadata);
         }  catch (Throwable t) {
             LOGGER.log(Level.WARNING, t, () -> MessageFormat.format("Failed to create output writer for {0}", workFile.getAbsolutePath()));
-            throw new FileWrintingException(t);
+            throw new FileWritingException(t);
         }
         try {
             LOGGER.finer(() -> MessageFormat.format("writing {0} to {1}", qualifiedName, workFile));
@@ -123,7 +127,7 @@ class Batch {
             LOGGER.finer(() -> MessageFormat.format("written {0}", workFile));
         } catch (Throwable t) {
             LOGGER.log(Level.WARNING, "Probable event loss: Failed to write to " + workFile.getAbsolutePath(), t);
-            throw new FileWrintingException(t);
+            throw new FileWritingException(t);
         } finally {
             try {
                 writer.close();

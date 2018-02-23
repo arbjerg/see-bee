@@ -2,12 +2,12 @@ package com.namely.seebee.crudeventlistener.parquet.internal.parquet;
 
 import com.namely.seebee.crudeventlistener.parquet.internal.ParquetFileCrudEventListener;
 import com.namely.seebee.crudreactor.CrudEventType;
+import com.namely.seebee.crudreactor.HasColumnMetadata;
 import com.namely.seebee.crudreactor.HasTableMetadata;
 import com.namely.seebee.crudreactor.RowEvent;
 import com.namely.seebee.typemapper.ColumnValue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.parquet.hadoop.api.WriteSupport;
-import org.apache.parquet.io.api.Binary;
 import org.apache.parquet.io.api.RecordConsumer;
 import org.apache.parquet.schema.MessageType;
 
@@ -27,6 +27,7 @@ public class RowEventWriteSupport extends WriteSupport<RowEvent> {
 
     private final MessageType messageType;
     private final ParquetSchema parquetSchema;
+    private final boolean mirrorDbSchema;
     private long rowCount;
 
     RowEventWriteSupport(HasTableMetadata databaseRows,
@@ -34,6 +35,7 @@ public class RowEventWriteSupport extends WriteSupport<RowEvent> {
                          Map<String, String> extraMetadata) {
         operationTypeColumnName = config.getOperationTypeColumnName();
         operationIsDeleteColumnName = config.getOperationIsDeleteColumnName();
+        mirrorDbSchema = config.isMirrorDbSchema();
         metadata = createMetadata(extraMetadata);
         parquetSchema = createSchema(databaseRows);
         messageType = parquetSchema.createMessageType(databaseRows.tableName());
@@ -48,15 +50,25 @@ public class RowEventWriteSupport extends WriteSupport<RowEvent> {
     private ParquetSchema createSchema(HasTableMetadata rows) {
         ParquetSchema.Builder builder = ParquetSchema.builder();
         rows.columnMetadatas().stream()
-                .map(ParquetField::of)
+                .map(columnMeta -> ParquetField.of(columnMeta).withRequired(isRequired(columnMeta)))
                 .forEach(builder::with);
         if (operationIsDeleteColumnName != null) {
-            builder.with(ParquetField.of(operationIsDeleteColumnName, true, Boolean.class));
+            builder.with(ParquetField.of(operationIsDeleteColumnName, Boolean.class).withRequired(true));
         }
         if (operationTypeColumnName != null) {
-            builder.with(ParquetField.of(operationTypeColumnName, true, Enum.class));
+            builder.with(ParquetField.of(operationTypeColumnName, Enum.class).withRequired(true));
         }
         return builder.build();
+    }
+
+    private boolean isRequired(HasColumnMetadata columnMeta) {
+        return mirrorDbSchema ?
+                // we assume nullable if unknown, and !nullable==required
+                !columnMeta.metaData().nullable().orElse(true)
+                :
+                // when we do not care to mirror DB schema, only pk are required
+                // (to support null for non-pk fields in delete-records)
+                columnMeta.pk();
     }
 
     @Override
@@ -78,7 +90,7 @@ public class RowEventWriteSupport extends WriteSupport<RowEvent> {
                 row.addValue(CrudEventType.REMOVE == dataRow.type());
             }
             if (operationTypeColumnName != null) {
-                row.addValue(Binary.fromString(dataRow.type().name()));
+                row.addValue(dataRow.type());
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new IllegalArgumentException("Got a row event with " + dataRow.data().columns().size() + " columns, metadata has " + parquetSchema.createMessageType("").getFieldCount());

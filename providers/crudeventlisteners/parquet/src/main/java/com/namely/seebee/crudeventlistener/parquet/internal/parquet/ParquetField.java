@@ -24,6 +24,7 @@ class ParquetField<T> {
     private static final Map<Class<?>, PrimitiveType.PrimitiveTypeName> PRIMITIVES;
     private static final Map<Class<?>, PrimitiveWithOriginal> DERIVED;
     private static final Map<PrimitiveType.PrimitiveTypeName, BiConsumer<RecordConsumer, Object>> WRITERS;
+    private static final Map<Class, Object> DEFAULT_VALUES;
 
     static {
         PRIMITIVES = new HashMap<>();
@@ -77,6 +78,23 @@ class ParquetField<T> {
 
         putDerived(short.class, getDerived(Short.class));
         putDerived(byte.class, getDerived(Byte.class));
+
+        DEFAULT_VALUES = new HashMap<>();
+        DEFAULT_VALUES.put(String.class, "");
+        DEFAULT_VALUES.put(Enum.class, "");
+        DEFAULT_VALUES.put(Byte.class, 0);
+        DEFAULT_VALUES.put(Short.class, 0);
+        DEFAULT_VALUES.put(Integer.class, 0);
+        DEFAULT_VALUES.put(Long.class, 0L);
+        DEFAULT_VALUES.put(byte.class, 0);
+        DEFAULT_VALUES.put(short.class, 0);
+        DEFAULT_VALUES.put(int.class, 0);
+        DEFAULT_VALUES.put(long.class, 0L);
+        DEFAULT_VALUES.put(BigDecimal.class, BigDecimal.ZERO);
+        DEFAULT_VALUES.put(Date.class, Date.valueOf("1970-01-01"));
+        DEFAULT_VALUES.put(Timestamp.class, Timestamp.valueOf("1970-01-01 00:00:00"));
+        DEFAULT_VALUES.put(byte[].class, new byte[0]);
+
     }
 
     private static <T> void putDerived(Class<T> type, PrimitiveWithOriginal<T> primitiveWithOriginal) {
@@ -91,27 +109,30 @@ class ParquetField<T> {
     private Integer size;
     private Integer scale;
     private boolean required;
+    private T defaultValue;
 
 
     static ParquetField of(HasColumnMetadata metaData) {
         return of(metaData.name(),
-                metaData.pk(),
                 metaData.type(),
                 metaData.metaData().columnSize(),
                 metaData.metaData().decimalDigits());
     }
 
     private ParquetField(String name,
+                         Class<T> javaClass,
                          PrimitiveType.PrimitiveTypeName type,
                          OriginalType originalType,
                          Function<T, ?> toPrimitiveConverter) {
         this.name = name;
         this.type = type;
+        //noinspection unchecked
+        defaultValue = (T) DEFAULT_VALUES.get(javaClass);
         this.originalType = originalType;
         this.toPrimitiveConverter = toPrimitiveConverter;
     }
 
-    private ParquetField<T> withRequired(boolean required) {
+    public ParquetField<T> withRequired(boolean required) {
         this.required = required;
         return this;
     }
@@ -126,31 +147,34 @@ class ParquetField<T> {
         return this;
     }
 
-    public static <T> ParquetField<T> of(String name, boolean required, Class<T> type) {
-        return of(name, required, type, null, null);
+    public static <T> ParquetField<T> of(String name, Class<T> type) {
+        return of(name, type, null, null);
     }
 
-    private static <T> ParquetField<T> of(String name, boolean required, Class<T> type, Integer size, Integer scale) {
+    private static <T> ParquetField<T> of(String name, Class<T> type, Integer size, Integer scale) {
         PrimitiveType.PrimitiveTypeName primitive = PRIMITIVES.get(type);
         if (primitive != null) {
-            return new ParquetField<T>(name, primitive, null, null).withRequired(required);
+            return new ParquetField<>(name, type, primitive, null, null);
         }
         if (BigDecimal.class.equals(type)) {
             ParquetField<BigDecimal> field;
             if (size <= 9) {
                 field = new ParquetField<>(name,
+                        BigDecimal.class,
                         INT32,
                         OriginalType.DECIMAL,
                         bd -> bd.setScale(scale, RoundingMode.HALF_EVEN).unscaledValue().intValueExact()
                 );
             } else if (size <= 18) {
                 field = new ParquetField<>(name,
+                        BigDecimal.class,
                         INT64,
                         OriginalType.DECIMAL,
                         bd -> bd.setScale(scale, RoundingMode.HALF_EVEN).unscaledValue().longValueExact()
                 );
             } else {
                 field = new ParquetField<>(name,
+                        BigDecimal.class,
                         BINARY,
                         OriginalType.DECIMAL,
                         bd -> Binary.fromConstantByteArray(
@@ -160,18 +184,17 @@ class ParquetField<T> {
             }
             //noinspection unchecked
             ParquetField<T> f = (ParquetField<T>) field;
-            return f.withRequired(required)
-                    .withSize(size)
+            return f.withSize(size)
                     .withScale(scale);
         }
 
         PrimitiveWithOriginal<T> derived = getDerived(type);
         if (derived != null) {
             return new ParquetField<>(name,
+                    type,
                     derived.getPrimitive(),
                     derived.getOriginal(),
                     derived.toPrimitiveConverter()::apply)
-                    .withRequired(required)
                     .withSize(size)
                     .withScale(scale);
         }
@@ -208,6 +231,9 @@ class ParquetField<T> {
     }
 
     void write(RecordConsumer recordConsumer, T value, int idx) {
+        if (value == null && required) {
+            value = defaultValue;
+        }
         if (value != null) {
             recordConsumer.startField(name, idx);
             if (toPrimitiveConverter != null) {
@@ -221,11 +247,6 @@ class ParquetField<T> {
 
     private static int dateToInt(Date date) {
         return (int) (date.getTime() / MILLIS_PER_DAY);
-    }
-
-    private static Binary toBinary(BigDecimal bigDecimal) {
-        byte[] value = bigDecimal.unscaledValue().toByteArray();
-        return Binary.fromConstantByteArray(value);
     }
 
     private static class PrimitiveWithOriginal<T> {

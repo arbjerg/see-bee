@@ -14,7 +14,6 @@ public class ParquetSchema {
     private boolean rowOngoing = false;
 
 
-    @SuppressWarnings("unchecked")
     ParquetSchema(List<ParquetField<?>> fields) {
         this.fields = fields.toArray(new ParquetField[fields.size()]);
     }

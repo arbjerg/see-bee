@@ -1,13 +1,13 @@
 package com.namely.seebee.crudeventlistener.parquet.internal;
 
-class FileWrintingException extends RuntimeException {
+class FileWritingException extends RuntimeException {
     static final long serialVersionUID = 42;
 
-    public FileWrintingException(Throwable cause) {
+    public FileWritingException(Throwable cause) {
         super(cause);
     }
 
-    public FileWrintingException(String msg) {
+    public FileWritingException(String msg) {
         super(msg);
     }
 }

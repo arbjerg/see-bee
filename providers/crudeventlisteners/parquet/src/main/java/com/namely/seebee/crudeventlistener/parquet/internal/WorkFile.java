@@ -15,17 +15,17 @@ class WorkFile {
         this.spoolFile = spoolFile;
     }
 
-    void spool() throws FileWrintingException {
+    void spool() throws FileWritingException {
         if (!workFile.exists()) {
-            throw new FileWrintingException("Work file disappeared: " + workFile.getAbsolutePath());
+            throw new FileWritingException("Work file disappeared: " + workFile.getAbsolutePath());
         }
         if (spoolFile.exists()) {
-            throw new FileWrintingException("A spool file unexpectedly appeared: " + spoolFile.getAbsolutePath());
+            throw new FileWritingException("A spool file unexpectedly appeared: " + spoolFile.getAbsolutePath());
         }
 
         if (!workFile.renameTo(spoolFile)) {
             if (!spoolFile.getParentFile().mkdirs() || !workFile.renameTo(spoolFile)) {
-                throw new FileWrintingException(MessageFormat.format("Failed to rename {0} to {1}", workFile.getAbsolutePath(), spoolFile.getAbsolutePath()));
+                throw new FileWritingException(MessageFormat.format("Failed to rename {0} to {1}", workFile.getAbsolutePath(), spoolFile.getAbsolutePath()));
             }
         }
         LOGGER.fine(() -> MessageFormat.format("Moved data to {0} size {1}", spoolFile, spoolFile.length()));

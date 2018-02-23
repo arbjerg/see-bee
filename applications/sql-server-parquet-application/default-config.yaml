@@ -8,6 +8,7 @@ parquet:
   spoolDirectory: /parquet/spool
   dictionaryEncodingEnabled: true
   compressionCodec: SNAPPY  # UNCOMPRESSED, SNAPPY, GZIP, LZO
+  mirrorDbSchema: true
 
 sqlserver-reactor:
   jdbcHostName: sqlserver
