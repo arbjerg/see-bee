@@ -3,27 +3,31 @@ services:
 
   sqlserver:
     build: sqlserver
+    image: pt_sqlserver
 
   seebee:
     build:
-      context: ../../../applications/sql-server-parquet-application
+      context: ../../applications/sql-server-parquet-application
       args:
         JAR_FILE: sql-server-parquet-application-0.0.2-SNAPSHOT-jar-with-dependencies.jar
-    container_name: seebee
+    image: pt_seebee
+    container_name: ${SEEBEE_CONTAINER_NAME}
     volumes:
       - data:/parquet
     links:
       - sqlserver
     depends_on:
       - sqlserver
+    command: ${SEEBEE_PARAMS}
 
   tester:
     build: tester
-    container_name: tester
+    image: pt_tester
+    container_name: ${TESTER_CONTAINER_NAME}
     links:
       - sqlserver
     volumes:
-      - data:/parquet
+      - data:/parquet:ro
     depends_on:
       - seebee
 

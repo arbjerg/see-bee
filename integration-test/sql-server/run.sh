@@ -1,54 +1,49 @@
 #!/bin/bash
 
-TOP_DIR=../..
-MAVEN_IMAGE_VERSION=3.5-jdk-9-slim
-export COMPOSE_PROJECT_NAME=parquet
+cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-# docker needs absolute paths for volumes
-PATH_TO_TOP=`(cd ${TOP_DIR}; pwd)`
-
-# The environment variable SEEBEE_CACHE can be used to point to a persistent cache for build dependencies
-# Setting SEEBEE_CACHE=/tmp/seebee for example, will use that directory to store all jar dependencies used
-# to build SeeBee.
-if [[ -v SEEBEE_CACHE ]]; then
-    M2="-v ${SEEBEE_CACHE}/m2:/root/.m2"
-else
-    M2=""
+if [[ ! -v COMPOSE_PROJECT_NAME ]]; then
+    export COMPOSE_PROJECT_NAME=parquet
 fi
 
-# Rebuild all SeeBee jar files
-docker run -it --rm --name seebee-maven ${M2} -v ${PATH_TO_TOP}:/usr/src/seebee -w /usr/src/seebee maven:${MAVEN_IMAGE_VERSION} mvn -T 2C -DskipTests clean package
-
-DC="docker-compose -f docker/docker-compose.yaml"
-
-# Tests assume empty spool directories, so we make sure the volume is deleted
+# Tests assume empty spool directories, so we make sure the volume is deleted even if previous tests have been aborted
 docker volume rm ${COMPOSE_PROJECT_NAME}_data 2&> /dev/null || true
 
-#${DC} build >/dev/null
-${DC} up -d >/dev/null
+export TESTER_CONTAINER_NAME=${COMPOSE_PROJECT_NAME}_tester
+export SEEBEE_CONTAINER_NAME=${COMPOSE_PROJECT_NAME}_seebee
 
-echo "Running tests"
+echo "${COMPOSE_PROJECT_NAME}: Setting up"
 
-TESTER_EXIT_CODE=$(docker wait tester)
+if ! docker-compose up -d >/dev/null; then
+    echo "Starting failed. Rebuilding."
+    if ! ./rebuild.sh; then
+        exit $?
+    fi
+    if ! docker-compose up -d; then
+        echo "Rebuilding did not help. Panic."
+        exit 1
+    fi
+fi
+
+echo "${COMPOSE_PROJECT_NAME}: Running tests"
+
+TESTER_EXIT_CODE=$(docker wait ${TESTER_CONTAINER_NAME})
 
 RESULT=2
 if [[ ${TESTER_EXIT_CODE} != 0 ]]; then
-    echo Tests failed with code ${TESTER_EXIT_CODE}
+    echo "Tests failed with code ${TESTER_EXIT_CODE}"
     echo "--- Tester:"
-    docker logs tester
+    docker logs ${TESTER_CONTAINER_NAME}
     echo "--- Seebee:"
-    docker logs seebee
+    docker logs ${SEEBEE_CONTAINER_NAME}
     echo "---"
     RESULT=1
 else
-    docker logs tester | grep "Tests run:"
-    echo "Tests OK"
+    docker logs ${TESTER_CONTAINER_NAME} | grep "Tests run:"
+    echo "${COMPOSE_PROJECT_NAME}: All Tests OK"
     RESULT=0
 fi
 
-${DC} stop
-${DC} rm -f -v
-
-echo -n "Removing volume: "; docker volume rm ${COMPOSE_PROJECT_NAME}_data
+docker-compose down -v --rmi local
 
 exit ${RESULT}

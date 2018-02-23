@@ -5,10 +5,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class Deadline {
+    public static final long TIMEOUT_MS = 5*60*1000;  // When running several tests in parallel, things may go slow
+
     private final long deadline;
 
-    public Deadline(long timeout) {
-        this.deadline = System.currentTimeMillis() + timeout;
+    public Deadline() {
+        this.deadline = System.currentTimeMillis() + TIMEOUT_MS;
     }
 
     public void check() throws InterruptedException {

@@ -59,7 +59,7 @@
         <dependency>
             <groupId>com.namely.seebee</groupId>
             <artifactId>parquet-crudeventlistener</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql -->

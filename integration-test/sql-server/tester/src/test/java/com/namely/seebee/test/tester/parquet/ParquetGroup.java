@@ -65,21 +65,30 @@ public class ParquetGroup implements Iterable<ParquetRow> {
                 ParquetRow row = new ParquetRow(fieldNames);
                 for (int primitiveField = 0; primitiveField < fieldCount; primitiveField++) {
                     int field = primitiveFieldMap[primitiveField];
-                    row.set(primitiveField, group.getValueToString(field, rowIndex));
+                    try {
+                        row.set(primitiveField, group.getValueToString(field, rowIndex));
+                    } catch (Exception e) {
+                        // Will happen for missing (i.e. null) values
+                    }
+                    try {
+                        row.set(primitiveField, BigInteger.valueOf(group.getBoolean(field, rowIndex)?1:0));
+                    } catch (Exception e) {
+                        // ignored, probably not a boolean then
+                    }
                     try {
                         row.set(primitiveField, new BigInteger(group.getBinary(field, rowIndex).getBytes()));
                     } catch (Exception e) {
-                        // ignored
+                        // ignored, so this is not a DECIMAL
                     }
                     try {
                         row.set(primitiveField, BigInteger.valueOf(group.getLong(field, rowIndex)));
                     } catch (Exception e) {
-                        // ignored
+                        // ignored, we just guess this is not a Long
                     }
                     try {
                         row.set(primitiveField, BigInteger.valueOf(group.getInteger(field, rowIndex)));
                     } catch (Exception e) {
-                        // ignored
+                        // ignored, since it seems like this is not an Integer
                     }
                 }
                 rowIndex++;
