@@ -18,6 +18,14 @@
 version: '2'
 services:
 
+  maven:
+    image: maven:3.5-jdk-9-slim
+    container_name: maven
+    working_dir: /usr/src/seebee
+    volumes:
+      - ../..:/usr/src/seebee
+      - m2:/root/.m2
+
   sqlserver:
     build: sqlserver
     image: pt_sqlserver
@@ -50,3 +58,4 @@ services:
 
 volumes:
   data:
+  m2:

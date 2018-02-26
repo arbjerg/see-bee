@@ -31,12 +31,12 @@ export SEEBEE_CONTAINER_NAME=${COMPOSE_PROJECT_NAME}_seebee
 
 echo "${COMPOSE_PROJECT_NAME}: Setting up"
 
-if ! docker-compose up -d >/dev/null; then
+if ! docker-compose up -d tester >/dev/null; then
     echo "Starting failed. Rebuilding."
     if ! ./rebuild.sh; then
         exit $?
     fi
-    if ! docker-compose up -d; then
+    if ! docker-compose up -d tester; then
         echo "Rebuilding did not help. Panic."
         exit 1
     fi
