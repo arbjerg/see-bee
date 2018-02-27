@@ -14,14 +14,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-module com.namely.seebee.application.support {
-    requires com.namely.seebee.configuration;
-    requires transitive java.logging;
-    requires com.namely.seebee.repository;
-    requires com.namely.seebee.softwareinfo.standard;
-    requires com.namely.seebee.repository.standard;
-    requires com.namely.seebee.configuration.yaml;
-    exports com.namely.seebee.application.support.config;
-    exports com.namely.seebee.application.support.logging;
-    exports com.namely.seebee.application.support.util;
+package com.namely.seebee.crudreactor.common.internal.engine;
+
+public class IllegalSqlServerReactorConfiguration extends Exception {
+    private static final long serialVersionUID = 42L;
+
+    IllegalSqlServerReactorConfiguration(Exception cause) {
+        super(cause);
+    }
 }

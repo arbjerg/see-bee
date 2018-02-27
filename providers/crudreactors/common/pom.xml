@@ -19,17 +19,22 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>application-support</artifactId>
+    <artifactId>crudreactor-common</artifactId>
     <packaging>jar</packaging>
-    <name>SeeBee Application Support</name>
+    <name>CRUD Reactor - Common</name>
 
     <parent>
         <groupId>com.namely.seebee</groupId>
-        <artifactId>applications</artifactId>
+        <artifactId>crudreactors</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
-
+    
     <dependencies>
+        <dependency>
+            <groupId>com.namely.seebee</groupId>
+            <artifactId>crudreactor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.namely.seebee</groupId>
             <artifactId>configuration</artifactId>
@@ -37,33 +42,9 @@
         </dependency>
         <dependency>
             <groupId>com.namely.seebee</groupId>
-            <artifactId>repository</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.namely.seebee</groupId>
-            <artifactId>softwareinfo</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.namely.seebee</groupId>
-            <artifactId>softwareinfo</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.namely.seebee</groupId>
-            <artifactId>standard-softwareinfo</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.namely.seebee</groupId>
-            <artifactId>standard-repository</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.namely.seebee</groupId>
-            <artifactId>yaml-configuration</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <artifactId>repositoryclient</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
+    
 </project>

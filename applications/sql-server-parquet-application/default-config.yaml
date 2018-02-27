@@ -27,7 +27,7 @@ parquet:
   compressionCodec: SNAPPY  # UNCOMPRESSED, SNAPPY, GZIP, LZO
   mirrorDbSchema: true
 
-sqlserver-reactor:
+reactor:
   jdbcHostName: sqlserver
   jdbcPort: 1433
   jdbcDatabasename: seebee
@@ -35,6 +35,8 @@ sqlserver-reactor:
   jdbcPassword: Password1
   changesPollIntervalMillis: 1000
   schemaReloadIntervalMillis: 60000
+
+sqlserver-reactor:
   pollingStrategy: SNAPSHOT # FAST, ISOLATED, CONSISTENT, SNAPSHOT
 
 

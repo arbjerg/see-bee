@@ -31,5 +31,5 @@ public interface HasResolve {
      * @see HasStart#start(HasConfiguration)
      * @param repository the created repository
      */
-    void resolve(HasConfiguration repository);
+    void resolve(HasConfiguration repository) throws StartupException;
 }

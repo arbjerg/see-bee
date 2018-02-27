@@ -31,5 +31,5 @@ public interface HasInitialize {
      * @see HasStart#start(HasConfiguration)
      * @param repository the created repository
      */
-    void initialize(HasComponents repository);
+    void initialize(HasComponents repository) throws StartupException;
 }

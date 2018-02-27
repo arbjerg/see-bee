@@ -20,7 +20,6 @@ import com.namely.seebee.crudeventlistener.parquet.internal.ParquetFileCrudEvent
 import com.namely.seebee.crudreactor.CrudEventListener;
 
 public interface ParquetCrudEventListener {
-
     static CrudEventListener create() {
         return new ParquetFileCrudEventListener();
     }

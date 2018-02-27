@@ -25,4 +25,5 @@ module com.namely.seebee.application {
     requires com.namely.seebee.configuration.yaml;
     requires com.namely.seebee.crudeventlistener.parquet;
     requires com.namely.seebee.application.support;
+    requires com.namely.seebee.crudreactor.common;
 }

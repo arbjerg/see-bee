@@ -34,7 +34,9 @@
     </description>
     
     <modules>
+        <module>common</module>
         <module>sql-server</module>
+        <!-- <module>postgres</module> -->
     </modules>
     
 </project>

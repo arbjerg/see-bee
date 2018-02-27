@@ -14,13 +14,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.namely.seebee.crudreactor.sqlserver;
+package com.namely.seebee.crudreactor.common.data.events;
 
-import com.namely.seebee.crudreactor.common.PollingCrudReactorSpecifics;
-import com.namely.seebee.crudreactor.sqlserver.internal.SqlServerCrudReactorSpecifics;
+import com.namely.seebee.crudreactor.CrudEventType;
+import com.namely.seebee.crudreactor.RowData;
+import com.namely.seebee.crudreactor.RowEvent;
 
-public interface SqlServerCrudReactor {
-    static PollingCrudReactorSpecifics create() {
-        return new SqlServerCrudReactorSpecifics();
+public final class RowEventRemove implements RowEvent {
+    private final RowData data;
+
+    public RowEventRemove(RowData data) {
+        this.data = data;
+    }
+
+    @Override
+    public final CrudEventType type() {
+        return CrudEventType.REMOVE;
+    }
+
+    @Override
+    public RowData data() {
+        return data;
+    }
+
+    @Override
+    public String toString() {
+        return "Remove " + data.toString();
     }
 }

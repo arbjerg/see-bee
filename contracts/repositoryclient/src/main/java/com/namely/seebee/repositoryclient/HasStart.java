@@ -28,5 +28,5 @@ public interface HasStart {
      *
      * @param repository the created repository
      */
-    void start(HasConfiguration repository);
+    void start(HasConfiguration repository) throws StartupException;
 }

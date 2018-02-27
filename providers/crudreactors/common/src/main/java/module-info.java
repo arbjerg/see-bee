@@ -14,14 +14,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-module com.namely.seebee.application.support {
+module com.namely.seebee.crudreactor.common {
+    requires transitive com.namely.seebee.crudreactor;
+    requires transitive com.namely.seebee.repositoryclient;
     requires com.namely.seebee.configuration;
-    requires transitive java.logging;
-    requires com.namely.seebee.repository;
-    requires com.namely.seebee.softwareinfo.standard;
-    requires com.namely.seebee.repository.standard;
-    requires com.namely.seebee.configuration.yaml;
-    exports com.namely.seebee.application.support.config;
-    exports com.namely.seebee.application.support.logging;
-    exports com.namely.seebee.application.support.util;
+    requires com.namely.seebee.typemapper;
+    requires java.sql;
+
+    exports com.namely.seebee.crudreactor.common;
+    exports com.namely.seebee.crudreactor.common.data.events;
+    exports com.namely.seebee.crudreactor.common.data.tables;
 }

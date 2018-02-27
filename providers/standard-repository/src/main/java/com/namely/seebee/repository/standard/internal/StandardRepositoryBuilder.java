@@ -89,8 +89,8 @@ public class StandardRepositoryBuilder implements Repository.Builder {
     public Repository build() {
         if (closed.compareAndSet(false, true)) {
             StandardRepository repository = new StandardRepository(componentMap, componentList);
-            LOGGER.fine("Initializing components");
 
+            LOGGER.fine("Initializing components");
             repository.streamOfTrait(HasInitialize.class)
                     .forEach(c -> {
                         LOGGER.fine(" - Initializing " + c.getClass().getSimpleName());
@@ -100,8 +100,9 @@ public class StandardRepositoryBuilder implements Repository.Builder {
                             LOGGER.log(SEVERE, t, () -> "Failed to initialize " + c);
                             throw t;
                         }
-                    });LOGGER.fine("Resolving components");
+                    });
 
+            LOGGER.fine("Resolving components");
             repository.streamOfTrait(HasResolve.class)
                     .forEach(c -> {
                         LOGGER.fine(" - Resolving " + c.getClass().getSimpleName());
@@ -112,6 +113,7 @@ public class StandardRepositoryBuilder implements Repository.Builder {
                             throw t;
                         }
                     });
+
             LOGGER.fine("Starting components");
             repository.streamOfTrait(HasStart.class)
                     .forEach(c -> {

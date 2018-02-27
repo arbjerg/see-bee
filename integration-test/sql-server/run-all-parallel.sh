@@ -47,7 +47,7 @@ start() {
     echo "Spooling tasks"
 
     spawn_test "--parquet.operationTypeColumnName=CB_TYPE"
-    spawn_test "--sqlserver-reactor.schemaReloadIntervalMillis=100 --sqlserver-reactor.changesPollIntervalMillis=10"
+    spawn_test "--reactor.schemaReloadIntervalMillis=100 --reactor.changesPollIntervalMillis=10"
     spawn_test "--parquet.dictionaryEncodingEnabled=false"
     spawn_test "--parquet.mirrorDbSchema=false"
     spawn_test "--parquet.writeInOrder=false"
@@ -56,8 +56,8 @@ start() {
     POLL_TIME=500
     for STRATEGY in "SNAPSHOT" "FAST" "ISOLATED" "CONSISTENT"; do
         SP="--sqlserver-reactor.pollingStrategy=${STRATEGY}"
-        PP="--sqlserver-reactor.changesPollIntervalMillis=${POLL_TIME}"
-        RP="--sqlserver-reactor.schemaReloadIntervalMillis=${RELOAD_TIME}"
+        PP="--reactor.changesPollIntervalMillis=${POLL_TIME}"
+        RP="--reactor.schemaReloadIntervalMillis=${RELOAD_TIME}"
 
         spawn_test "${SP} ${PP} ${RP}"
     done

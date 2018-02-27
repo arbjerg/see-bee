@@ -15,8 +15,9 @@
  * the License.
  */
 module com.namely.seebee.crudreactor.sqlserver {
-    requires transitive com.namely.seebee.crudreactor;
-    requires transitive com.namely.seebee.repositoryclient;
+    requires com.namely.seebee.crudreactor;
+    requires com.namely.seebee.repositoryclient;
+    requires com.namely.seebee.crudreactor.common;
     requires com.namely.seebee.configuration;
     requires com.namely.seebee.typemapper;
     requires java.sql;
